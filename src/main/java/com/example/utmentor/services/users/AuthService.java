@@ -30,9 +30,9 @@ public class AuthService {
         var errors = new HashMap<String, String>();
 
         if (_repository.existsByUsername(request.username()))
-            errors.put("username", "Username already exists.");
+            errors.put("UsernameExisted", "Username already exists.");
         if (_repository.existsByStudentID(request.studentID()))
-            errors.put("studentEmail", "Email already exists.");
+            errors.put("StudentIDExisted", "StudentID already exists.");
 
         if (!errors.isEmpty()) return GlobalResult.badRequest(errors);
 
