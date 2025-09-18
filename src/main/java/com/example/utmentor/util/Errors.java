@@ -1,7 +1,5 @@
 package com.example.utmentor.util;
 
-import com.example.utmentor.util.ErrorItem;
-
 public final class Errors {
     private Errors() {}
 
@@ -12,5 +10,7 @@ public final class Errors {
     public static final ErrorItem STUDENTID_EXISTS =
             new ErrorItem("studentID", "existed", "Student ID already exists.");
 
-
+    // Login errors
+    public static final ErrorItem INVALID_CREDENTIALS =
+            new ErrorItem("credentials", "invalid", "Username or password is incorrect.");
 }
