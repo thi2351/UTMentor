@@ -3,14 +3,13 @@ package com.example.utmentor.services.users;
 import com.example.utmentor.infrastructures.repository.UserRepository;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.User;
-import com.example.utmentor.models.exceptions.GlobalResult;
+import com.example.utmentor.util.Errors;
 import com.example.utmentor.models.webModels.users.CreateUserRequest;
 import com.example.utmentor.models.webModels.users.CreateUserResponse;
-import jakarta.validation.Valid;
+import com.example.utmentor.util.ValidatorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -25,16 +24,16 @@ public class AuthService {
     }
 
 
-    public GlobalResult<CreateUserResponse> createUser(CreateUserRequest request) {
+    public CreateUserResponse createUser(CreateUserRequest request) {
         //Validation: Unique studentID, studentEmail, username
-        var errors = new HashMap<String, String>();
+        ValidatorException ex = new ValidatorException("Register request failed.");
 
         if (_repository.existsByUsername(request.username()))
-            errors.put("UsernameExisted", "Username already exists.");
+            ex.add(Errors.USERNAME_EXISTS);
         if (_repository.existsByStudentID(request.studentID()))
-            errors.put("StudentIDExisted", "StudentID already exists.");
+            ex.add(Errors.STUDENTID_EXISTS);
 
-        if (!errors.isEmpty()) return GlobalResult.badRequest(errors);
+        if (ex.hasAny()) throw ex;
 
         String passwordHashed = _encoder.encode(request.password());
         User user = new User(
@@ -52,7 +51,6 @@ public class AuthService {
         );
 
         _repository.save(user);
-        var response = new CreateUserResponse("EEEEE");
-        return new GlobalResult<CreateUserResponse>(response,new HashMap<String, String>(), HttpStatus.OK);
+        return new CreateUserResponse(request.username(), request.studentID(), request.studentEmail());
     }
 }
