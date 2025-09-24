@@ -1,7 +1,7 @@
 package com.example.utmentor.infrastructures.securities;
 
 import com.example.utmentor.infrastructures.repository.UserRepository;
-import com.example.utmentor.models.docEntities.User;
+import com.example.utmentor.models.docEntities.users.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

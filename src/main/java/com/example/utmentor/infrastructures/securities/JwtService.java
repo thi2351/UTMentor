@@ -38,7 +38,7 @@ public class JwtService {
                 .claims(claims)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
-                .signWith(secretKey)
+                .signWith(secretKey, io.jsonwebtoken.Jwts.SIG.HS256)
                 .compact();
     }
 

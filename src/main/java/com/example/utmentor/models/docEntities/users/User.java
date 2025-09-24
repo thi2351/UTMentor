@@ -1,11 +1,14 @@
-package com.example.utmentor.models.docEntities;
+package com.example.utmentor.models.docEntities.users;
 
-import com.example.utmentor.models.webModels.users.CreateUserRequest;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import java.time.Instant;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 
-import java.util.UUID;
+import com.example.utmentor.models.docEntities.Department;
+import com.example.utmentor.models.docEntities.Role;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public class User {
     @NotBlank @Indexed(unique = true)
@@ -21,9 +24,6 @@ public class User {
 
     Role role;
 
-    @NotBlank
-    String studentID;
-
     @NotBlank @Email @Indexed(unique = true)
     String studentEmail;
 
@@ -37,12 +37,18 @@ public class User {
 
     TutorProfile tutorProfile;
 
+    boolean isActive = false;
+
+    boolean isDeleted = false;
+
+    Instant createdAt = Instant.now();
+
+
     public User(String id,
                 String firstName,
                 String lastName,
                 Department department,
                 Role role,
-                String studentID,
                 String studentEmail,
                 String username,
                 String passwordHash,
@@ -53,7 +59,6 @@ public class User {
         this.lastName = lastName;
         this.department = department;
         this.role = role;
-        this.studentID = studentID;
         this.studentEmail = studentEmail;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -99,14 +104,6 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public String getStudentID() {
-        return studentID;
-    }
-
-    public void setStudentID(String studentID) {
-        this.studentID = studentID;
     }
 
     public String getStudentEmail() {
