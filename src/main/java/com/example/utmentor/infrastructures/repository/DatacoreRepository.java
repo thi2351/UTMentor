@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface DatacoreRepository extends MongoRepository<Datacore, String> {
-    boolean existsByStudentEmail(String studentEmail);
-    Optional<Datacore> findByStudentEmail(String studentEmail);
+    boolean existsByEmail(String email);
+    Optional<Datacore> findByStudentEmail(String email);
 }

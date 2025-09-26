@@ -49,23 +49,23 @@ public class AuthService {
     }
 
     public CreateUserResponse createUser(CreateUserRequest request) {
-        //Validation: Unique studentID, studentEmail, username
+        //Validation: Unique studentID, email, username
         ValidatorException ex = new ValidatorException("Register request failed.");
 
-        if (!_datacore.existsByStudentEmail(request.studentEmail())) {
+        if (!_datacore.existsByEmail(request.email())) {
             ex.add(Errors.DATACORE_NOT_FOUND);
         }
 
         if (ex.hasAny()) throw ex;
 
-        if (_repository.existsByStudentEmail(request.studentEmail())) {
+        if (_repository.existsByStudentEmail(request.email())) {
             ex.add(Errors.EMAIL_EXISTS);
         }
 
         if (ex.hasAny()) throw ex;
 
         //CreateUser
-        String username = getLocalPart(request.studentEmail());
+        String username = getLocalPart(request.email());
         String passwordHashed = _encoder.encode(request.password());
         var user = new User(
                 UUID.randomUUID().toString(),
@@ -73,7 +73,7 @@ public class AuthService {
                 null,
                 null,
                 Role.STUDENT,
-                request.studentEmail(),
+                request.email(),
                 username,
                 passwordHashed,
                 null,

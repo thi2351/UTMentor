@@ -25,7 +25,7 @@ public class Datacore {
 
     @NotBlank @Email
     @Indexed(unique = true)
-    String studentEmail;
+    String email;
 
     StudentProfile studentProfile;
 
@@ -46,7 +46,7 @@ public class Datacore {
         this.lastName = lastName;
         this.department = department;
         this.role = role;
-        this.studentEmail = studentEmail;
+        this.email = email;
         this.studentProfile = studentProfile;
         this.tutorProfile = tutorProfile;
     }
@@ -92,11 +92,11 @@ public class Datacore {
     }
 
     public String getStudentEmail() {
-        return studentEmail;
+        return email;
     }
 
     public void setStudentEmail(String studentEmail) {
-        this.studentEmail = studentEmail;
+        this.email = studentEmail;
     }
 
     public TutorProfile getTutorProfile() {

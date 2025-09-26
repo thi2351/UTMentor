@@ -16,13 +16,13 @@ public final class Errors {
 
     // Registration errors
     public static final ErrorItem EMAIL_EXISTS =
-            new ErrorItem("studentEmail", "existed", "Student email already exists.");
+            new ErrorItem("email", "existed", "Student email already exists.");
     
     public static final ErrorItem PASSWORD_MISMATCH =
             new ErrorItem("password", "mismatch", "Password and rewrite password do not match.");
     
     public static final ErrorItem INVALID_EMAIL_FORMAT =
-            new ErrorItem("studentEmail", "invalid", "Invalid email format.");
+            new ErrorItem("email", "invalid", "Invalid email format.");
     
     public static final ErrorItem WEAK_PASSWORD =
             new ErrorItem("password", "weak", "Password must be at least 8 characters long.");
@@ -32,7 +32,7 @@ public final class Errors {
             new ErrorItem("datacore", "not_found", "Datacore record not found.");
     
     public static final ErrorItem DATACORE_EMAIL_EXISTS =
-            new ErrorItem("studentEmail", "existed", "Student email already exists in datacore.");
+            new ErrorItem("email", "existed", "Student email already exists in datacore.");
     
     public static final ErrorItem DATACORE_ALREADY_DELETED =
             new ErrorItem("datacore", "already_deleted", "Datacore record is already deleted.");

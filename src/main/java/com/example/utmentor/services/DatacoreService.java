@@ -28,7 +28,7 @@ public class DatacoreService {
         ValidatorException ex = new ValidatorException("Create datacore request failed.");
 
         // Check if email already exists
-        if (_repository.existsByStudentEmail(request.studentEmail())) {
+        if (_repository.existsByEmail(request.studentEmail())) {
             ex.add(Errors.DATACORE_EMAIL_EXISTS);
         }
 
@@ -104,7 +104,7 @@ public class DatacoreService {
 
         // Check if email is being changed and if new email already exists
         if (!existing.getStudentEmail().equals(request.studentEmail()) && 
-            _repository.existsByStudentEmail(request.studentEmail())) {
+            _repository.existsByEmail(request.studentEmail())) {
             ex.add(Errors.DATACORE_EMAIL_EXISTS);
         }
 
