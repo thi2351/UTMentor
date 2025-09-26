@@ -25,7 +25,7 @@ public class User {
     Role role;
 
     @NotBlank @Email @Indexed(unique = true)
-    String studentEmail;
+    String email;
 
     @NotBlank @Indexed(unique = true)
     String username;
@@ -49,7 +49,7 @@ public class User {
                 String lastName,
                 Department department,
                 Role role,
-                String studentEmail,
+                String email,
                 String username,
                 String passwordHash,
                 StudentProfile studentProfile,
@@ -59,7 +59,7 @@ public class User {
         this.lastName = lastName;
         this.department = department;
         this.role = role;
-        this.studentEmail = studentEmail;
+        this.email = email;
         this.username = username;
         this.passwordHash = passwordHash;
         this.studentProfile = studentProfile;
@@ -106,12 +106,12 @@ public class User {
         this.role = role;
     }
 
-    public String getStudentEmail() {
-        return studentEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setStudentEmail(String studentEmail) {
-        this.studentEmail = studentEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {

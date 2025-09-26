@@ -8,6 +8,6 @@ import com.example.utmentor.models.docEntities.users.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
     boolean existsByUsername(String username);
-    boolean existsByStudentEmail(String studentEmail);
+    boolean existsByEmail(String email);
     Optional<User> findByUsername(String username);
 }

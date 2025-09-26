@@ -58,7 +58,7 @@ public class AuthService {
 
         if (ex.hasAny()) throw ex;
 
-        if (_repository.existsByStudentEmail(request.email())) {
+        if (_repository.existsByEmail(request.email())) {
             ex.add(Errors.EMAIL_EXISTS);
         }
 

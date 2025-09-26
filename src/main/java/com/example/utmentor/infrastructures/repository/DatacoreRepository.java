@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface DatacoreRepository extends MongoRepository<Datacore, String> {
     boolean existsByEmail(String email);
-    Optional<Datacore> findByStudentEmail(String email);
+    Optional<Datacore> findByEmail(String email);
 }

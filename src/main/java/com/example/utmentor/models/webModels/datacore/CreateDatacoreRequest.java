@@ -14,7 +14,7 @@ public record CreateDatacoreRequest(
         @NotBlank String lastName,
         @NotNull Department department,
         @NotNull Role role,
-        @NotBlank @Email String studentEmail,
+        @NotBlank @Email String email,
         StudentProfile studentProfile,
         TutorProfile tutorProfile
 ) {

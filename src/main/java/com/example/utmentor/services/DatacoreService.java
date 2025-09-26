@@ -28,7 +28,7 @@ public class DatacoreService {
         ValidatorException ex = new ValidatorException("Create datacore request failed.");
 
         // Check if email already exists
-        if (_repository.existsByEmail(request.studentEmail())) {
+        if (_repository.existsByEmail(request.email())) {
             ex.add(Errors.DATACORE_EMAIL_EXISTS);
         }
 
@@ -45,7 +45,7 @@ public class DatacoreService {
                 request.lastName(),
                 request.department(),
                 request.role(),
-                request.studentEmail(),
+                request.email(),
                 request.studentProfile(),
                 request.tutorProfile()
         );
@@ -66,7 +66,7 @@ public class DatacoreService {
     }
 
     public DatacoreResponse getDatacoreByEmail(String email) {
-        Optional<Datacore> datacoreOpt = _repository.findByStudentEmail(email);
+        Optional<Datacore> datacoreOpt = _repository.findByEmail(email);
         if (datacoreOpt.isEmpty()) {
             ValidatorException ex = new ValidatorException("Datacore not found.");
             ex.add(Errors.DATACORE_NOT_FOUND);
@@ -103,8 +103,8 @@ public class DatacoreService {
         }
 
         // Check if email is being changed and if new email already exists
-        if (!existing.getStudentEmail().equals(request.studentEmail()) && 
-            _repository.existsByEmail(request.studentEmail())) {
+        if (!existing.getEmail().equals(request.email()) && 
+            _repository.existsByEmail(request.email())) {
             ex.add(Errors.DATACORE_EMAIL_EXISTS);
         }
 
@@ -118,7 +118,7 @@ public class DatacoreService {
         existing.setLastName(request.lastName());
         existing.setDepartment(request.department());
         existing.setRole(request.role());
-        existing.setStudentEmail(request.studentEmail());
+        existing.setEmail(request.email());
         existing.setStudentProfile(request.studentProfile());
         existing.setTutorProfile(request.tutorProfile());
 
@@ -165,7 +165,7 @@ public class DatacoreService {
                 datacore.getLastName(),
                 datacore.getDepartment(),
                 datacore.getRole(),
-                datacore.getStudentEmail(),
+                datacore.getEmail(),
                 datacore.getStudentProfile(),
                 datacore.getTutorProfile(),
                 datacore.isDeleted()

@@ -38,7 +38,7 @@ public class Datacore {
                           String lastName,
                           Department department,
                           Role role,
-                          String studentEmail,
+                          String email,
                           StudentProfile studentProfile,
                           TutorProfile tutorProfile) {
         this.id = id;
@@ -91,12 +91,12 @@ public class Datacore {
         this.role = role;
     }
 
-    public String getStudentEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setStudentEmail(String studentEmail) {
-        this.email = studentEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public TutorProfile getTutorProfile() {

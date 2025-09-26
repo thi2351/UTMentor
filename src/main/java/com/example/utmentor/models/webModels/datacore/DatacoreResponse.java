@@ -11,7 +11,7 @@ public record DatacoreResponse(
         String lastName,
         Department department,
         Role role,
-        String studentEmail,
+        String email,
         StudentProfile studentProfile,
         TutorProfile tutorProfile,
         boolean isDeleted
