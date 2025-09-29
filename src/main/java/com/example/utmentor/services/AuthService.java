@@ -72,7 +72,7 @@ public class AuthService {
                 obj.getFirstName(),
                 obj.getLastName(),
                 null,
-                Role.STUDENT,
+                obj.getRole(),
                 request.email(),
                 username,
                 null,
@@ -81,6 +81,8 @@ public class AuthService {
                 null
 
         );
+        System.out.println(obj.getRole());
+
 
         _repository.save(user);
         return new CreateUserResponse(username);

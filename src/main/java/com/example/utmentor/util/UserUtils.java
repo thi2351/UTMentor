@@ -12,7 +12,7 @@ public class UserUtils {
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getRole() != null ? List.of(user.getRole().name()) : List.of(),
+                user.getRole() ,
                 user.getAvatarUrl()
         );
     }

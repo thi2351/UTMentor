@@ -21,7 +21,7 @@ public class Datacore {
 
     Department department;
 
-    Role role;
+    Role[] role;
 
     @NotBlank @Email
     @Indexed(unique = true)
@@ -37,7 +37,7 @@ public class Datacore {
                           String firstName,
                           String lastName,
                           Department department,
-                          Role role,
+                          Role[] role,
                           String email,
                           StudentProfile studentProfile,
                           TutorProfile tutorProfile) {
@@ -83,11 +83,11 @@ public class Datacore {
         this.department = department;
     }
 
-    public Role getRole() {
+    public Role[] getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(Role[] role) {
         this.role = role;
     }
 

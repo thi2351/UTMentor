@@ -86,7 +86,7 @@ public class AuthController {
 
         Map<String, Object> claims = new HashMap<>();
         if (result.getRole() != null) {
-            claims.put("role", result.getRole().name());
+            claims.put("role", result.getRole());
         }
 
         // Generate tokens

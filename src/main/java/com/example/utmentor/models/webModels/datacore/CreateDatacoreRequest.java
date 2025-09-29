@@ -13,7 +13,7 @@ public record CreateDatacoreRequest(
         @NotBlank String firstName,
         @NotBlank String lastName,
         @NotNull Department department,
-        @NotNull Role role,
+        @NotNull Role[] role,
         @NotBlank @Email String email,
         StudentProfile studentProfile,
         TutorProfile tutorProfile

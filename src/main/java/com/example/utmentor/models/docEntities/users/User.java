@@ -22,7 +22,7 @@ public class User {
 
     Department department;
 
-    Role role;
+    Role[] role;
 
     String avatarUrl=null;
 
@@ -50,7 +50,7 @@ public class User {
                 String firstName,
                 String lastName,
                 Department department,
-                Role role,
+                Role[] role,
                 String email,
                 String username,
                 String avatarUrl,
@@ -102,7 +102,7 @@ public class User {
         this.department = department;
     }
 
-    public Role getRole() {
+    public Role[] getRole() {
         return role;
     }
 
@@ -110,7 +110,7 @@ public class User {
         return avatarUrl;
     }
 
-    public void setRole(Role role) {
+    public void setRole(Role[] role) {
         this.role = role;
     }
 

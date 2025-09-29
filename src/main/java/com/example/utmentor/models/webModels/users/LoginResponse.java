@@ -1,11 +1,11 @@
 package com.example.utmentor.models.webModels.users;
 
 import java.util.List;
-
+import com.example.utmentor.models.docEntities.Role;
 public record LoginResponse(
         String username,
         String firstName,
         String lastName,
-        List<String> role,
+        Role[] role,
         String avatarUrl
 ) {} 

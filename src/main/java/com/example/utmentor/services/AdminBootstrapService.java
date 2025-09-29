@@ -1,7 +1,7 @@
 package com.example.utmentor.services;
 
 import java.util.UUID;
-
+//import java.util.*;
 import com.example.utmentor.models.docEntities.HCMUT_DATACORE.Datacore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -56,7 +56,7 @@ public class AdminBootstrapService implements CommandLineRunner {
                 "System",
                 "Administrator",
                 Department.CS,
-                Role.ADMIN,
+                new Role[]{Role.ADMIN},
                 adminEmail,
                 // username - not needed for datacore
                 // passwordHash - not needed for datacore
@@ -74,7 +74,7 @@ public class AdminBootstrapService implements CommandLineRunner {
                 "System",
                 "Administrator",
                 Department.CS,
-                Role.ADMIN,
+                new Role[]{Role.ADMIN},
                 adminEmail,
                 adminUsername,
                 passwordHash,

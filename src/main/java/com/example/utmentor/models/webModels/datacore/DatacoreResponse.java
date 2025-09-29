@@ -10,7 +10,7 @@ public record DatacoreResponse(
         String firstName,
         String lastName,
         Department department,
-        Role role,
+        Role[] role,
         String email,
         StudentProfile studentProfile,
         TutorProfile tutorProfile,
