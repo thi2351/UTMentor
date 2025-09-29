@@ -78,6 +78,7 @@ public class AdminBootstrapService implements CommandLineRunner {
                 adminEmail,
                 adminUsername,
                 passwordHash,
+                null, // avatarUrl
                 null, // studentProfile
                 null  // tutorProfile
         );

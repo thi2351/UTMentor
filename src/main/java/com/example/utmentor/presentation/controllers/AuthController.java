@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 
 @CrossOrigin(
-        origins = "http://localhost:5173",
+        origins = {"http://localhost:5173"},
         allowCredentials = "true"
 )
 @RestController
@@ -37,7 +37,7 @@ public class AuthController {
         this._otpService = otpService;
     }
 
-    @PostMapping("register")
+        @PostMapping("register")
     public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) {
         CreateUserResponse result = _service.createUser(request);
 

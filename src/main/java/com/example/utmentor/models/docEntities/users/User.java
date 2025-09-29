@@ -24,6 +24,8 @@ public class User {
 
     Role role;
 
+    String avatarUrl;
+
     @NotBlank @Email @Indexed(unique = true)
     String email;
 
@@ -51,6 +53,7 @@ public class User {
                 Role role,
                 String email,
                 String username,
+                String avatarUrl,
                 String passwordHash,
                 StudentProfile studentProfile,
                 TutorProfile tutorProfile) {
@@ -64,6 +67,7 @@ public class User {
         this.passwordHash = passwordHash;
         this.studentProfile = studentProfile;
         this.tutorProfile = tutorProfile;
+        this.avatarUrl = avatarUrl;
     }
 
     public String getFirstName() {
@@ -100,6 +104,10 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
     public void setRole(Role role) {

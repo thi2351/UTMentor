@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.example.utmentor.models.webModels.users.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,12 +15,9 @@ import com.example.utmentor.infrastructures.repository.UserRepository;
 import com.example.utmentor.infrastructures.securities.JwtService;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
-import com.example.utmentor.models.webModels.users.CreateUserRequest;
-import com.example.utmentor.models.webModels.users.CreateUserResponse;
-import com.example.utmentor.models.webModels.users.LoginRequest;
-import com.example.utmentor.models.webModels.users.LoginResponse;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -64,17 +62,20 @@ public class AuthService {
 
         if (ex.hasAny()) throw ex;
 
+        var obj= _datacore.findByEmail(request.email()).get();
+
         //CreateUser
         String username = getLocalPart(request.email());
         String passwordHashed = _encoder.encode(request.password());
         var user = new User(
                 UUID.randomUUID().toString(),
-                null,
-                null,
+                obj.getFirstName(),
+                obj.getLastName(),
                 null,
                 Role.STUDENT,
                 request.email(),
                 username,
+                null,
                 passwordHashed,
                 null,
                 null
@@ -111,7 +112,18 @@ public class AuthService {
             claims.put("role", user.getRole().name());
         }
 
-        String token = _jwtService.generateToken(user.getId(), claims);
-        return new LoginResponse(token, secret);
+        // Generate tokens
+        String accessToken = _jwtService.generateToken(user.getId(), claims);
+
+        // Build user DTO
+        UserRespone userDto = new UserRespone(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                List.of(user.getRole().name()),
+                user.getAvatarUrl()
+        );
+
+        return new LoginResponse(userDto,accessToken);
     }
 }
