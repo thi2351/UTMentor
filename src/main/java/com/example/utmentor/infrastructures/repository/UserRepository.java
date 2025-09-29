@@ -1,14 +1,13 @@
 package com.example.utmentor.infrastructures.repository;
 
-import com.example.utmentor.models.docEntities.User;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import java.util.Optional;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Optional;
+import com.example.utmentor.models.docEntities.users.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
     boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
     Optional<User> findByUsername(String username);
-    boolean existsByEmail(@Email @NotBlank String email);
 }
