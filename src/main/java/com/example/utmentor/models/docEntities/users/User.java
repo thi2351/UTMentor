@@ -24,7 +24,7 @@ public class User {
 
     Role role;
 
-    String avatarUrl;
+    String avatarUrl=null;
 
     @NotBlank @Email @Indexed(unique = true)
     String email;

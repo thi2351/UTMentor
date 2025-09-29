@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.example.utmentor.models.webModels.users.*;
-import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.utmentor.infrastructures.repository.DatacoreRepository;
 import com.example.utmentor.infrastructures.repository.UserRepository;
-import com.example.utmentor.infrastructures.securities.JwtService;
+//import com.example.utmentor.infrastructures.securities.JwtService;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.util.Errors;
@@ -24,17 +24,17 @@ public class AuthService {
     private final UserRepository _repository;
     private final DatacoreRepository _datacore;
     private final PasswordEncoder _encoder;
-    private final JwtService _jwtService;
+//    private final JwtService _jwtService;
     private final OtpService _otpService;
     private final EmailService _emailService;
-    @Value("${fakerefresh}") String secret;
+//    @Value("${fakerefresh}") String secret;
     
     AuthService(UserRepository repository, DatacoreRepository datacore, PasswordEncoder encoder, 
-                JwtService jwtService, OtpService otpService, EmailService emailService) {
+                 OtpService otpService, EmailService emailService) {
         this._repository = repository;
         this._datacore = datacore;
         this._encoder = encoder;
-        this._jwtService = jwtService;
+//        this._jwtService = jwtService;
         this._otpService = otpService;
         this._emailService = emailService;
     }
@@ -86,7 +86,7 @@ public class AuthService {
         return new CreateUserResponse(username);
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public User login(LoginRequest request) {
         String username = request.username().trim();
         String rawPassword = request.password();
 
@@ -107,23 +107,8 @@ public class AuthService {
             throw vex;
         }
 
-        Map<String, Object> claims = new HashMap<>();
-        if (user.getRole() != null) {
-            claims.put("role", user.getRole().name());
-        }
-
-        // Generate tokens
-        String accessToken = _jwtService.generateToken(user.getId(), claims);
-
         // Build user DTO
-        UserRespone userDto = new UserRespone(
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                List.of(user.getRole().name()),
-                user.getAvatarUrl()
-        );
+        return user;
 
-        return new LoginResponse(userDto,accessToken);
     }
 }
