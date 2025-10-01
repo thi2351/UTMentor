@@ -38,21 +38,21 @@ public class DatacoreController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR') or hasRole('FACULITY')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR')")
     public ResponseEntity<List<DatacoreResponse>> getAllDatacore() {
         List<DatacoreResponse> responses = _service.getAllDatacore();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR') or hasRole('FACULITY')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR')")
     public ResponseEntity<DatacoreResponse> getDatacoreById(@PathVariable String id) {
         DatacoreResponse response = _service.getDatacoreById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/email/{email}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR') or hasRole('FACULITY')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR')")
     public ResponseEntity<DatacoreResponse> getDatacoreByEmail(@PathVariable String email) {
         DatacoreResponse response = _service.getDatacoreByEmail(email);
         return ResponseEntity.ok(response);

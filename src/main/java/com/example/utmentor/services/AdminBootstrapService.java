@@ -1,8 +1,8 @@
 package com.example.utmentor.services;
 
+import java.util.List;
 import java.util.UUID;
 
-import com.example.utmentor.models.docEntities.HCMUT_DATACORE.Datacore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.utmentor.infrastructures.repository.DatacoreRepository;
 import com.example.utmentor.infrastructures.repository.UserRepository;
 import com.example.utmentor.models.docEntities.Department;
+import com.example.utmentor.models.docEntities.HCMUT_DATACORE.Datacore;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
 
@@ -58,8 +59,6 @@ public class AdminBootstrapService implements CommandLineRunner {
                 Department.CS,
                 Role.ADMIN,
                 adminEmail,
-                // username - not needed for datacore
-                // passwordHash - not needed for datacore
                 null, // studentProfile
                 null  // tutorProfile
         );
@@ -67,18 +66,18 @@ public class AdminBootstrapService implements CommandLineRunner {
         // Save admin profile to datacore
         datacoreRepository.save(adminProfile);
 
-        // Create admin user
+        // Create admin user with multiple roles
         String passwordHash = passwordEncoder.encode(adminPassword);
         User adminUser = new User(
                 UUID.randomUUID().toString(),
                 "System",
                 "Administrator",
                 Department.CS,
-                Role.ADMIN,
+                List.of(Role.ADMIN, Role.AFFAIR), // Admin can have multiple roles
                 adminEmail,
                 adminUsername,
-                passwordHash,
                 null, // avatarUrl
+                passwordHash,
                 null, // studentProfile
                 null  // tutorProfile
         );

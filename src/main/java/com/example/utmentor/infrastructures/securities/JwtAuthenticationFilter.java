@@ -1,11 +1,9 @@
 package com.example.utmentor.infrastructures.securities;
 
-import com.example.utmentor.infrastructures.repository.UserRepository;
-import com.example.utmentor.models.docEntities.users.User;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Optional;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,10 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import com.example.utmentor.infrastructures.repository.UserRepository;
+import com.example.utmentor.models.docEntities.users.User;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -43,9 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Optional<User> userOpt = userRepository.findByUsername(username);
                 if (userOpt.isPresent()) {
                     User user = userOpt.get();
-                    Collection<? extends GrantedAuthority> authorities = user.getRole() != null
-                            ? List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                            : List.of();
+                    
+                    // Extract authorities from user roles
+                    Collection<? extends GrantedAuthority> authorities = user.getRoles().stream()
+                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                            .toList();
+                    
                     Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

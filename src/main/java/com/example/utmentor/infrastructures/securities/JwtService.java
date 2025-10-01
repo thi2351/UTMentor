@@ -3,6 +3,7 @@ package com.example.utmentor.infrastructures.securities;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -32,12 +33,15 @@ public class JwtService {
     public String generateToken(String subject, Map<String, Object> claims) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(expirationMinutes * 60);
+        
+        Map<String, Object> enhancedClaims = new HashMap<>(claims);
+        
         return Jwts.builder()
                 .subject(subject)
                 .issuer(issuer)
-                .claims(claims)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(exp))
+                .claims(enhancedClaims)
+                .issuedAt(Date.from(now))        // Automatically adds "iat" claim
+                .expiration(Date.from(exp))      // Automatically adds "exp" claim
                 .signWith(secretKey, io.jsonwebtoken.Jwts.SIG.HS256)
                 .compact();
     }

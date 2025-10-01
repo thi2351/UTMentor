@@ -36,4 +36,14 @@ public final class Errors {
     
     public static final ErrorItem DATACORE_ALREADY_DELETED =
             new ErrorItem("datacore", "already_deleted", "Datacore record is already deleted.");
+    
+    // User management errors
+    public static final ErrorItem EMAIL_REQUIRED =
+            new ErrorItem("email", "required", "Email is required.");
+    
+    public static final ErrorItem USERNAME_REQUIRED =
+            new ErrorItem("username", "required", "Username is required.");
+    
+    public static final ErrorItem PASSWORD_REQUIRED =
+            new ErrorItem("password", "required", "Password is required.");
 }

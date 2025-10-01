@@ -2,7 +2,6 @@ package com.example.utmentor.infrastructures.securities;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
@@ -72,22 +71,18 @@ public class SecurityConfig {
     }
 
     private Collection<? extends GrantedAuthority> extractAuthorities(Jwt jwt) {
-        Object roleClaim = jwt.getClaim("role");
+        // Extract roles from the "roles" claim
+        Object rolesClaim = jwt.getClaim("roles");
         Stream<String> roles;
-        if (roleClaim instanceof String s) {
-            roles = Stream.of(s);
-        } else if (roleClaim instanceof Collection<?> list) {
+        
+        if (rolesClaim instanceof Collection<?> list) {
+            // roles as a list of strings
             roles = list.stream().filter(String.class::isInstance).map(String.class::cast);
-        } else if (roleClaim instanceof Map<?, ?> map && map.containsKey("roles")) {
-            Object inner = map.get("roles");
-            if (inner instanceof Collection<?> list) {
-                roles = list.stream().filter(String.class::isInstance).map(String.class::cast);
-            } else {
-                roles = Stream.empty();
-            }
         } else {
+            // No roles found
             roles = Stream.empty();
         }
+        
         return roles.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).toList();
     }
 }

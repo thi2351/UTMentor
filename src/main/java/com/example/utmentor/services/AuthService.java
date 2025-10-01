@@ -1,23 +1,23 @@
 package com.example.utmentor.services;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.example.utmentor.models.webModels.users.*;
-//import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.utmentor.infrastructures.repository.DatacoreRepository;
 import com.example.utmentor.infrastructures.repository.UserRepository;
-//import com.example.utmentor.infrastructures.securities.JwtService;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
+import com.example.utmentor.models.webModels.users.CreateUserRequest;
+import com.example.utmentor.models.webModels.users.CreateUserResponse;
+import com.example.utmentor.models.webModels.users.LoginRequest;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
-import java.util.List;
 
 @Service
 public class AuthService {
@@ -25,8 +25,8 @@ public class AuthService {
     private final DatacoreRepository _datacore;
     private final PasswordEncoder _encoder;
 //    private final JwtService _jwtService;
-    private final OtpService _otpService;
-    private final EmailService _emailService;
+//    private final OtpService _otpService;
+//    private final EmailService _emailService;
 //    @Value("${fakerefresh}") String secret;
     
     AuthService(UserRepository repository, DatacoreRepository datacore, PasswordEncoder encoder, 
@@ -35,8 +35,8 @@ public class AuthService {
         this._datacore = datacore;
         this._encoder = encoder;
 //        this._jwtService = jwtService;
-        this._otpService = otpService;
-        this._emailService = emailService;
+//        this._otpService = otpService;
+//        this._emailService = emailService;
     }
 
     public static String getLocalPart(String email) {
@@ -46,7 +46,7 @@ public class AuthService {
         return email.substring(0, at);
     }
 
-    public CreateUserResponse createUser(CreateUserRequest request) {
+    public CreateUserResponse register(CreateUserRequest request) {
         //Validation: Unique studentID, email, username
         ValidatorException ex = new ValidatorException("Register request failed.");
 
@@ -64,7 +64,6 @@ public class AuthService {
 
         var obj= _datacore.findByEmail(request.email()).get();
 
-        //CreateUser
         String username = getLocalPart(request.email());
         String passwordHashed = _encoder.encode(request.password());
         var user = new User(
@@ -72,7 +71,7 @@ public class AuthService {
                 obj.getFirstName(),
                 obj.getLastName(),
                 null,
-                Role.STUDENT,
+                List.of(Role.STUDENT), // User starts with STUDENT role
                 request.email(),
                 username,
                 null,
@@ -107,8 +106,26 @@ public class AuthService {
             throw vex;
         }
 
-        // Build user DTO
         return user;
+    }
 
+    public Map<String, Object> createAcessTokenClaim(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            // Add roles as a list of strings
+            List<String> roleNames = user.getRoles().stream()
+                    .map(Role::name)
+                    .toList();
+            claims.put("roles", roleNames);
+        }
+        return claims;
+    }
+
+    public Map<String, Object> createRefreshTokenClaim(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        claims.put("userId", user.getId());
+        return claims;
     }
 }
+

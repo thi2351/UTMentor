@@ -1,35 +1,32 @@
 package com.example.utmentor.presentation.controllers;
 
-import com.example.utmentor.infrastructures.securities.JwtService;
-import com.example.utmentor.models.webModels.otp.ResendOtpRequest;
-import com.example.utmentor.models.webModels.otp.VerifyEmailRequest;
-import com.example.utmentor.models.webModels.otp.VerifyEmailResponse;
-import com.example.utmentor.services.OtpService;
-import jakarta.annotation.security.PermitAll;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
-import com.example.utmentor.models.webModels.users.CreateUserRequest;
-import com.example.utmentor.models.webModels.users.CreateUserResponse;
+import com.example.utmentor.infrastructures.securities.JwtService;
+import com.example.utmentor.models.docEntities.Role;
+import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.models.webModels.users.LoginRequest;
 import com.example.utmentor.models.webModels.users.LoginResponse;
 import com.example.utmentor.services.AuthService;
-import com.example.utmentor.util.UserUtils;
+import com.example.utmentor.services.OtpService;
+import com.example.utmentor.services.UserService;
 
-import jakarta.validation.Valid;
-import com.example.utmentor.models.docEntities.users.User;
-import java.util.HashMap;
-import java.util.Map;
+import jakarta.annotation.security.PermitAll;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.HttpHeaders;
+import jakarta.validation.Valid;
 
 @CrossOrigin(
         origins = {"http://localhost:5173"},
@@ -38,43 +35,47 @@ import org.springframework.http.HttpHeaders;
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
-    private final AuthService _service;
-    private final OtpService _otpService;
+    private final AuthService _authService;
+//    private final OtpService _otpService;
     private final JwtService _jwtService;
-    @Value("${fakerefresh}") String secret;
-    public AuthController(AuthService service, OtpService otpService, JwtService jwtService) {
-        this._service = service;
-        this._otpService = otpService;
+    private final UserService _userService;
+    
+    public AuthController(AuthService service,
+                          OtpService otpService,
+                          JwtService jwtService,
+                          UserService userService) {
+        this._authService = service;
+//        this._otpService = otpService;
         this._jwtService = jwtService;
+        this._userService = userService;
     }
 
-        @PostMapping("register")
-    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) {
-        CreateUserResponse result = _service.createUser(request);
+//    @PostMapping("register")
+//    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) {
+//        CreateUserResponse result = _service.createUser(request);
+//
+//        return ResponseEntity.ok(result);
+//    }
 
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("verify")
-    @Async
-    public ResponseEntity<VerifyEmailResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
-        _otpService.generateOtp(request.email());
-
-        boolean success =  _otpService.validateOtp(request.email(), request.otp());
-        VerifyEmailResponse response = new VerifyEmailResponse(success);
-
-        if (success) {
-            //Bật isActive, fetch data từ dưới datacore lên user
-        }
-
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("verify")
+//    public ResponseEntity<VerifyEmailResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+//        _otpService.generateOtp(request.email());
+//
+//        boolean success =  _otpService.validateOtp(request.email(), request.otp());
+//        VerifyEmailResponse response = new VerifyEmailResponse(success);
+//
+//        if (success) {
+//            //Bật isActive, fetch data từ dưới datacore lên user
+//        }
+//
+//        return ResponseEntity.ok(response);
+//    }
 
 
-    @PostMapping("resend")
-    public void resendEmail(@Valid @RequestBody ResendOtpRequest request) {
-        _otpService.generateOtp(request.email());
-    }
+//    @PostMapping("resend")
+//    public void resendEmail(@Valid @RequestBody ResendOtpRequest request) {
+//        _otpService.generateOtp(request.email());
+//    }
 
     @PermitAll
     @PostMapping("login")
@@ -82,27 +83,27 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
 
-        User result = _service.login(request);
+        //Find user
+        User result = _authService.login(request);
 
-        Map<String, Object> claims = new HashMap<>();
-        if (result.getRole() != null) {
-            claims.put("role", result.getRole().name());
-        }
+        //Generate accessToken
+        Map<String, Object> accessClaim = _authService.createAcessTokenClaim(result);
+        String accessToken = _jwtService.generateToken(result.getId(), accessClaim);
+        //Generate refreshToken
+        Map<String, Object> refreshClaims = _authService.createRefreshTokenClaim(result);
+        String refreshToken = _jwtService.generateToken(result.getId(), refreshClaims);
 
-        // Generate tokens
-        String accessToken = _jwtService.generateToken(result.getId(), claims);
-//        String refreshToken = _jwtService.generateRefreshToken(result.getId());
 
         // Build HttpOnly cookies
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
-                .secure(true)            // use true in production with HTTPS
+                .secure(true)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(15 * 60)         // 15 minutes
                 .build();
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", secret)
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
@@ -114,10 +115,89 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        // Build DTO (without tokens in JSON)
-        LoginResponse loginResponse = UserUtils.pickUser(result);
+        // Build response with tokens
+        LoginResponse loginResponse = LoginResponse.builder()
+                .user(result)
+                .accessToken(accessToken)
+                .build();
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("refresh")
+    public ResponseEntity<LoginResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        // Extract refresh token from cookie
+        String refreshToken = null;
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        
+        if (refreshToken == null || !_jwtService.isTokenValid(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        // Extract user info from refresh token
+        String userId = _jwtService.extractSubject(refreshToken);
+        // Refresh token contains userId as subject
+        var userOpt = _userService.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        User user = userOpt.get();
+        
+        // Generate new access token
+        Map<String, Object> claims = _authService.createAcessTokenClaim(user);
+        String newAccessToken = _jwtService.generateToken(user.getId(), claims);
+        
+        // Update access token cookie
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", newAccessToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(15 * 60) // 15 minutes
+                .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        
+        // Return new access token in response
+        LoginResponse loginResponse = LoginResponse.builder()
+                .user(user)
+                .accessToken(newAccessToken)
+                .build();
+        
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Clear both access and refresh token cookies
+        ResponseCookie clearAccessCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+        
+        ResponseCookie clearRefreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, clearAccessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, clearRefreshCookie.toString());
+        
+        return ResponseEntity.ok().build();
     }
 
 }

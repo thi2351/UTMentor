@@ -1,6 +1,8 @@
 package com.example.utmentor.models.docEntities.users;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -22,7 +24,7 @@ public class User {
 
     Department department;
 
-    Role role;
+    List<Role> roles = new ArrayList<>();
 
     String avatarUrl=null;
 
@@ -50,7 +52,7 @@ public class User {
                 String firstName,
                 String lastName,
                 Department department,
-                Role role,
+                List<Role> roles,
                 String email,
                 String username,
                 String avatarUrl,
@@ -61,7 +63,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.department = department;
-        this.role = role;
+        this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
         this.email = email;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -102,16 +104,52 @@ public class User {
         this.department = department;
     }
 
-    public Role getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
+    }
+    
+    // Convenience methods for single role operations
+    public Role getPrimaryRole() {
+        return roles.isEmpty() ? null : roles.get(0);
+    }
+
+    public void setPrimaryRole(Role role) {
+        if (role != null) {
+            this.roles = List.of(role);
+        } else {
+            this.roles = new ArrayList<>();
+        }
+    }
+    
+    // Helper methods for role management
+    public void addRole(Role role) {
+        if (role != null && !roles.contains(role)) {
+            roles.add(role);
+        }
+    }
+    
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+    
+    public boolean hasRole(Role role) {
+        return roles.contains(role);
+    }
+    
+    public boolean hasAnyRole(List<Role> requiredRoles) {
+        return requiredRoles.stream().anyMatch(this.roles::contains);
     }
 
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getEmail() {
