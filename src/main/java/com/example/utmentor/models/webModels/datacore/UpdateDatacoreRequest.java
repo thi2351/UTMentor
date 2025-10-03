@@ -8,13 +8,13 @@ import com.example.utmentor.models.docEntities.users.TutorProfile;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
+import java.util.List;
 public record UpdateDatacoreRequest(
         @NotBlank String id,
         @NotBlank String firstName,
         @NotBlank String lastName,
         @NotNull Department department,
-        @NotNull Role role,
+        @NotNull List<Role> role,
         @NotBlank @Email String email,
         StudentProfile studentProfile,
         TutorProfile tutorProfile

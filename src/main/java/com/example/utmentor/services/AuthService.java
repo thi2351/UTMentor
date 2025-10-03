@@ -71,7 +71,7 @@ public class AuthService {
                 obj.getFirstName(),
                 obj.getLastName(),
                 null,
-                List.of(Role.STUDENT), // User starts with STUDENT role
+                obj.getRole(), // User starts with STUDENT role
                 request.email(),
                 username,
                 null,

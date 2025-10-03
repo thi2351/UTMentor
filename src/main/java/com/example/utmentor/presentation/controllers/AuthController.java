@@ -27,7 +27,8 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
+import com.example.utmentor.models.webModels.users.CreateUserRequest;
+import com.example.utmentor.models.webModels.users.CreateUserResponse;
 @CrossOrigin(
         origins = {"http://localhost:5173"},
         allowCredentials = "true"
@@ -50,12 +51,12 @@ public class AuthController {
         this._userService = userService;
     }
 
-//    @PostMapping("register")
-//    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) {
-//        CreateUserResponse result = _service.createUser(request);
-//
-//        return ResponseEntity.ok(result);
-//    }
+    @PostMapping("register")
+    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody CreateUserRequest request) {
+        CreateUserResponse result = _authService.register(request);
+
+        return ResponseEntity.ok(result);
+    }
 
 //    @PostMapping("verify")
 //    public ResponseEntity<VerifyEmailResponse> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
@@ -100,7 +101,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(15 * 60)         // 15 minutes
+                .maxAge(15)         // 15 minutes
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)

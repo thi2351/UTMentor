@@ -7,7 +7,7 @@ import com.example.utmentor.models.docEntities.users.TutorProfile;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.mongodb.core.index.Indexed;
-
+import java.util.List;
 public class Datacore {
     @NotBlank
     @Indexed(unique = true)
@@ -21,7 +21,7 @@ public class Datacore {
 
     Department department;
 
-    Role role;
+    List<Role> role;
 
     @NotBlank @Email
     @Indexed(unique = true)
@@ -37,7 +37,7 @@ public class Datacore {
                           String firstName,
                           String lastName,
                           Department department,
-                          Role role,
+                          List<Role> role,
                           String email,
                           StudentProfile studentProfile,
                           TutorProfile tutorProfile) {
@@ -83,11 +83,11 @@ public class Datacore {
         this.department = department;
     }
 
-    public Role getRole() {
+    public List<Role> getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(List<Role> role) {
         this.role = role;
     }
 

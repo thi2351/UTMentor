@@ -2,6 +2,7 @@ package com.example.utmentor.infrastructures.securities;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
@@ -21,6 +22,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity
@@ -34,11 +38,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 bật CORS
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll() // login/register không cần token
+                        .anyRequest().authenticated()                // API khác cần JWT
                 )
                 .httpBasic(b -> b.disable())
                 .formLogin(f -> f.disable())
@@ -71,18 +76,28 @@ public class SecurityConfig {
     }
 
     private Collection<? extends GrantedAuthority> extractAuthorities(Jwt jwt) {
-        // Extract roles from the "roles" claim
         Object rolesClaim = jwt.getClaim("roles");
         Stream<String> roles;
-        
+
         if (rolesClaim instanceof Collection<?> list) {
-            // roles as a list of strings
             roles = list.stream().filter(String.class::isInstance).map(String.class::cast);
         } else {
-            // No roles found
             roles = Stream.empty();
         }
-        
+
         return roles.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).toList();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // FE domain
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

@@ -57,7 +57,7 @@ public class AdminBootstrapService implements CommandLineRunner {
                 "System",
                 "Administrator",
                 Department.CS,
-                Role.ADMIN,
+                List.of(Role.ADMIN),
                 adminEmail,
                 null, // studentProfile
                 null  // tutorProfile
