@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.example.utmentor.infrastructures.repository.DatacoreRepository;
+import com.example.utmentor.infrastructures.repository.Interface.DatacoreRepository;
 import com.example.utmentor.models.docEntities.HCMUT_DATACORE.Datacore;
 import com.example.utmentor.models.webModels.datacore.CreateDatacoreRequest;
 import com.example.utmentor.models.webModels.datacore.DatacoreResponse;

@@ -1,22 +1,26 @@
 package com.example.utmentor.util;
 
-import com.example.utmentor.util.ErrorItem;
-import com.example.utmentor.util.ValidatorException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import jakarta.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @RestControllerAdvice(basePackages = "com.example.utmentor")
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -33,6 +37,7 @@ public class ApiExceptionHandler {
         pd.setProperty("errors", ex.getErrors());
         return ResponseEntity.status(status).body(pd);
     }
+
 
     // @Valid trên body (DTO) -> 400
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.utmentor.infrastructures.repository.DatacoreRepository;
-import com.example.utmentor.infrastructures.repository.UserRepository;
+import com.example.utmentor.infrastructures.repository.Interface.DatacoreRepository;
+import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.models.webModels.users.CreateUserRequest;
@@ -29,8 +29,7 @@ public class AuthService {
 //    private final EmailService _emailService;
 //    @Value("${fakerefresh}") String secret;
     
-    AuthService(UserRepository repository, DatacoreRepository datacore, PasswordEncoder encoder, 
-                 OtpService otpService, EmailService emailService) {
+    public AuthService(UserRepository repository, DatacoreRepository datacore, PasswordEncoder encoder) {
         this._repository = repository;
         this._datacore = datacore;
         this._encoder = encoder;
@@ -56,15 +55,14 @@ public class AuthService {
 
         if (ex.hasAny()) throw ex;
 
-        if (_repository.existsByEmail(request.email())) {
-            ex.add(Errors.EMAIL_EXISTS);
+        String username = getLocalPart(request.email());
+        if (_repository.existsByUsername(username)) {
+            ex.add(Errors.USERNAME_EXISTS);
         }
 
         if (ex.hasAny()) throw ex;
 
         var obj= _datacore.findByEmail(request.email()).get();
-
-        String username = getLocalPart(request.email());
         String passwordHashed = _encoder.encode(request.password());
         var user = new User(
                 UUID.randomUUID().toString(),
@@ -72,13 +70,9 @@ public class AuthService {
                 obj.getLastName(),
                 null,
                 obj.getRole(), // User starts with STUDENT role
-                request.email(),
                 username,
                 null,
-                passwordHashed,
-                null,
-                null
-
+                passwordHashed
         );
 
         _repository.save(user);

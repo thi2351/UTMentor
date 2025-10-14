@@ -8,7 +8,7 @@ import com.example.utmentor.models.docEntities.users.User;
 public record LoginResponse(
     String firstName,
     String lastName,
-    String email,
+    String username,
     String avatarUrl,
     List<Role> roles,
     String accessToken,
@@ -49,7 +49,7 @@ public record LoginResponse(
             return new LoginResponse(
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail(),
+                user.getUsername(),
                 user.getAvatarUrl(),
                 user.getRoles(),
                 accessToken,

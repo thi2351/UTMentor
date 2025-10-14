@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.utmentor.infrastructures.repository.UserRepository;
+import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.models.docEntities.users.User;
 
 import jakarta.servlet.FilterChain;

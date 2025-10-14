@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.utmentor.infrastructures.repository.UserRepository;
+import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.util.Errors;
@@ -37,17 +37,11 @@ public class UserService {
     public User create(User userInput) {
         // Basic validation
         ValidatorException vex = new ValidatorException("Create user failed.");
-        if (userInput.getEmail() == null || userInput.getEmail().isBlank()) {
-            vex.add(Errors.EMAIL_REQUIRED);
-        }
         if (userInput.getUsername() == null || userInput.getUsername().isBlank()) {
             vex.add(Errors.USERNAME_REQUIRED);
         }
         if (userInput.getPasswordHash() == null || userInput.getPasswordHash().isBlank()) {
             vex.add(Errors.PASSWORD_REQUIRED);
-        }
-        if (userRepository.existsByEmail(userInput.getEmail())) {
-            vex.add(Errors.EMAIL_EXISTS);
         }
         if (userRepository.existsByUsername(userInput.getUsername())) {
             vex.add(Errors.USERNAME_EXISTS);
@@ -67,12 +61,9 @@ public class UserService {
                 userInput.getLastName(),
                 userInput.getDepartment(),
                 roles,
-                userInput.getEmail(),
                 userInput.getUsername(),
                 userInput.getAvatarUrl(),
-                passwordHash,
-                userInput.getStudentProfile(),
-                userInput.getTutorProfile()
+                passwordHash
         );
 
         return userRepository.save(user);
@@ -91,15 +82,6 @@ public class UserService {
         if (partial.getLastName() != null) existing.setLastName(partial.getLastName());
         if (partial.getDepartment() != null) existing.setDepartment(partial.getDepartment());
         if (partial.getAvatarUrl() != null) existing.setAvatarUrl(partial.getAvatarUrl());
-        if (partial.getEmail() != null && !partial.getEmail().equals(existing.getEmail())) {
-            if (userRepository.existsByEmail(partial.getEmail())) {
-                ValidatorException vex = new ValidatorException("Email exists");
-                vex.add(Errors.EMAIL_EXISTS);
-                vex.setHttpCode(HttpStatus.BAD_REQUEST);
-                throw vex;
-            }
-            existing.setEmail(partial.getEmail());
-        }
         if (partial.getUsername() != null && !partial.getUsername().equals(existing.getUsername())) {
             if (userRepository.existsByUsername(partial.getUsername())) {
                 ValidatorException vex = new ValidatorException("Username exists");
