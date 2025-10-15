@@ -19,7 +19,10 @@ import com.example.utmentor.util.ValidatorException;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(
+        origins = {"http://localhost:5173"},
+        allowCredentials = "true"
+)
 public class TutorSearchController {
     
     @Autowired

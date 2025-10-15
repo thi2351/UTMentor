@@ -1,8 +1,10 @@
 package com.example.utmentor.infrastructures.repository.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +47,13 @@ public class TutorSearchRepo {
         
         // Filter active tutors with available capacity
         query.addCriteria(Criteria.where("isActive").is(true));
-        query.addCriteria(Criteria.where("currentMenteeCount").lt("maximumCapacity"));
+        query.addCriteria(Criteria.where("currentMenteeCount").exists(true));
+        query.addCriteria(Criteria.where("maximumCapacity").exists(true));
+        // Use $expr to compare two fields: currentMenteeCount < maximumCapacity
+        query.addCriteria(Criteria.where("$expr").is(
+            new Document("$lt",
+                Arrays.asList("$currentMenteeCount", "$maximumCapacity"))
+        ));
         
         // Filter by expertise if provided
         if (expertiseList != null && !expertiseList.isEmpty()) {
