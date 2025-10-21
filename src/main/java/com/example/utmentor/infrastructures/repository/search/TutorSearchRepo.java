@@ -47,11 +47,8 @@ public class TutorSearchRepo {
         
         // Filter active tutors with available capacity
         query.addCriteria(Criteria.where("isActive").is(true));
-        query.addCriteria(Criteria.where("currentMenteeCount").exists(true));
-        query.addCriteria(Criteria.where("maximumCapacity").exists(true));
-        // Use $expr to compare two fields: currentMenteeCount < maximumCapacity
         query.addCriteria(Criteria.where("$expr").is(
-            new Document("$lt",
+            new Document("$lt", 
                 Arrays.asList("$currentMenteeCount", "$maximumCapacity"))
         ));
         
@@ -113,7 +110,7 @@ public class TutorSearchRepo {
             profile.getRatingAvg(),
             profile.getCurrentMenteeCount(),
             profile.getMaximumCapacity(),
-            null // description not available in current model
+            user.getDescription()
         );
     }
 }

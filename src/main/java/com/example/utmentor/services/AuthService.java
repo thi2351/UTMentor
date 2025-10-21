@@ -106,7 +106,6 @@ public class AuthService {
     public Map<String, Object> createAcessTokenClaim(User user) {
         Map<String, Object> claims = new HashMap<>();
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-            // Add roles as a list of strings
             List<String> roleNames = user.getRoles().stream()
                     .map(Role::name)
                     .toList();
