@@ -96,7 +96,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(15)         // 15 minutes
+                .maxAge(60*15)         // 1 minute
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
@@ -158,7 +158,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(15 * 60) // 15 minutes
+                .maxAge(5) // 5 seconds
                 .build();
         
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
