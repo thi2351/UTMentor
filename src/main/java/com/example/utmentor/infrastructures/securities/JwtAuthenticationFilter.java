@@ -1,20 +1,13 @@
 package com.example.utmentor.infrastructures.securities;
 
-import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
-import com.example.utmentor.infrastructures.securities.JwtService;
-import com.example.utmentor.models.docEntities.users.User;
 import java.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,11 +15,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
+    public JwtAuthenticationFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,54 +33,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = resolveToken(request);
 
+        // Không có token -> cho đi tiếp; endpoint cần auth sẽ bị 401 từ EntryPoint
         if (token == null || token.isBlank()) {
             chain.doFilter(request, response);
             return;
         }
 
         try {
-            if (!jwtService.isTokenValid(token)) {
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.setContentType("application/json");
-                return;
-            }
+            // parse + verify; ném ExpiredJwtException nếu hết hạn
+            var claims = jwtService.parseAndValidate(token);
 
-            String userId = jwtService.extractSubject(token);
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            String usernameOrId = claims.getSubject();
 
-            var authorities = user.getRoles().stream()
-                    .map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
-                    .toList();
+            // Lấy roles từ claims (List<String> hoặc String csv)
+            var authorities = jwtService.extractAuthorities(claims); // xem bên dưới
 
-            var auth = new UsernamePasswordAuthenticationToken(user.getUsername(), null, authorities);
+            var auth = new UsernamePasswordAuthenticationToken(
+                    usernameOrId, null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             chain.doFilter(request, response);
 
-        } catch (AuthenticationException ex) {
-            // Phòng hờ các lỗi auth khác → 401
+        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
+            //Token hết hạn trả isExpired = true
             SecurityContextHolder.clearContext();
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
+            writeJson(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "{\"isExpired\":true}");
+        } catch (io.jsonwebtoken.JwtException ex) {
+            SecurityContextHolder.clearContext();
+            writeJson(response, HttpServletResponse.SC_UNAUTHORIZED, null);
         }
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
+        String h = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (h != null && h.startsWith("Bearer ")) return h.substring(7);
         if (request.getCookies() != null) {
-            for (var cookie : request.getCookies()) {
-                if ("accessToken".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
+            for (var c : request.getCookies()) {
+                if ("accessToken".equals(c.getName())) return c.getValue();
             }
         }
         return null;
+    }
+
+    private void writeJson(HttpServletResponse res, int status, String json) throws IOException {
+        res.setStatus(status);
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        res.getWriter().write(json);
     }
 }
 
