@@ -31,9 +31,11 @@ public class JwtService {
         this.expirationMinutes = expirationMinutes;
     }
 
-    public String generateToken(String subject, Map<String, Object> claims) {
+    public String generateToken(String subject, Map<String, Object> claims, boolean isRefresh) {
         Instant now = Instant.now();
-        Instant exp = now.plusSeconds(expirationMinutes * 60);
+        long duration = 60*expirationMinutes;
+        if (isRefresh) duration *= 1344; //convert from 15 mins to 14 days
+        Instant exp = now.plusSeconds(duration);
         
         return Jwts.builder()
                 .subject(subject)

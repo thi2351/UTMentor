@@ -84,10 +84,10 @@ public class AuthController {
 
         //Generate accessToken
         Map<String, Object> accessClaim = _authService.createAcessTokenClaim(result);
-        String accessToken = _jwtService.generateToken(result.getId(), accessClaim);
+        String accessToken = _jwtService.generateToken(result.getId(), accessClaim,false);
         //Generate refreshToken
         Map<String, Object> refreshClaims = _authService.createRefreshTokenClaim(result);
-        String refreshToken = _jwtService.generateToken(result.getId(), refreshClaims);
+        String refreshToken = _jwtService.generateToken(result.getId(), refreshClaims,true);
 
 
         // Build HttpOnly cookies
@@ -96,7 +96,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(60*15)         // 1 minute
+                .maxAge(60*15)         // 15 minutes
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
@@ -150,7 +150,7 @@ public class AuthController {
         
         // Generate new access token
         Map<String, Object> claims = _authService.createAcessTokenClaim(user);
-        String newAccessToken = _jwtService.generateToken(user.getId(), claims);
+        String newAccessToken = _jwtService.generateToken(user.getId(), claims, false);
         
         // Update access token cookie
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", newAccessToken)
