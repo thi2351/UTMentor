@@ -2,6 +2,7 @@ package com.example.utmentor.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -133,213 +134,213 @@ public class AdminBootstrapService implements CommandLineRunner {
             System.out.println("Creating virtual tutors...");
 
             // Computer Science Department (30 tutors)
-            createVirtualTutor("tutor001", "Nguyen Van An", "an.nguyen@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor001", "Nguyễn Văn An", "an.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE), 5, 3, 4.8);
-            createVirtualTutor("tutor002", "Tran Thi Binh", "binh.tran@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor002", "Trần Thị Bình", "binh.tran@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.SOFTWARE_ENGINEERING, Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN), 4, 2, 4.6);
-            createVirtualTutor("tutor003", "Le Van Cuong", "cuong.le@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor003", "Lê Văn Cường", "cuong.le@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ALGORITHMS, Expertise.DATA_SCIENCE, Expertise.ARTIFICIAL_INTELLIGENCE), 6, 4, 4.9);
-            createVirtualTutor("tutor004", "Pham Thi Dung", "dung.pham@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor004", "Phạm Thị Dung", "dung.pham@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.COMPUTER_NETWORKS, Expertise.ALGORITHMS), 3, 1, 4.7);
-            createVirtualTutor("tutor005", "Hoang Van Em", "em.hoang@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor005", "Hoàng Văn Em", "em.hoang@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MOBILE_DEVELOPMENT, Expertise.WEB_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING), 4, 2, 4.5);
-            createVirtualTutor("tutor006", "Vo Thi Phuong", "phuong.vo@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor006", "Võ Thị Phương", "phuong.vo@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 5, 3, 4.7);
-            createVirtualTutor("tutor007", "Dang Van Quang", "quang.dang@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor007", "Đặng Văn Quang", "quang.dang@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE, Expertise.ALGORITHMS), 6, 4, 4.8);
-            createVirtualTutor("tutor008", "Bui Thi Hoa", "hoa.bui@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor008", "Bùi Thị Hòa", "hoa.bui@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE), 5, 2, 4.6);
-            createVirtualTutor("tutor009", "Ngo Van Inh", "inh.ngo@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor009", "Ngô Văn Ính", "inh.ngo@hcmut.edu.vn", Department.CS, // Note: Ính is less common, ensure it's correct
                     List.of(Expertise.DATABASE_DESIGN, Expertise.WEB_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING), 4, 3, 4.5);
-            createVirtualTutor("tutor010", "Do Thi Kim", "kim.do@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor010", "Đỗ Thị Kim", "kim.do@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MOBILE_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING), 5, 2, 4.7);
-            createVirtualTutor("tutor011", "Truong Van Long", "long.truong@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor011", "Trương Văn Long", "long.truong@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.COMPUTER_NETWORKS), 6, 5, 4.9);
-            createVirtualTutor("tutor012", "Nguyen Thi Mai", "mai.nguyen@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor012", "Nguyễn Thị Mai", "mai.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ALGORITHMS, Expertise.SOFTWARE_ENGINEERING), 4, 2, 4.6);
-            createVirtualTutor("tutor013", "Phan Van Nam", "nam.phan@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor013", "Phan Văn Nam", "nam.phan@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.MOBILE_DEVELOPMENT, Expertise.DATABASE_DESIGN), 5, 3, 4.7);
-            createVirtualTutor("tutor014", "Le Thi Oanh", "oanh.le@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor014", "Lê Thị Oanh", "oanh.le@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.DATA_SCIENCE, Expertise.MACHINE_LEARNING), 4, 2, 4.5);
-            createVirtualTutor("tutor015", "Tran Van Phuc", "phuc.tran@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor015", "Trần Văn Phúc", "phuc.tran@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ALGORITHMS), 6, 4, 4.8);
-            createVirtualTutor("tutor016", "Hoang Thi Quynh", "quynh.hoang@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor016", "Hoàng Thị Quỳnh", "quynh.hoang@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.SOFTWARE_ENGINEERING, Expertise.DATABASE_DESIGN), 5, 3, 4.6);
-            createVirtualTutor("tutor017", "Nguyen Van Sang", "sang.nguyen@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor017", "Nguyễn Văn Sang", "sang.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.ALGORITHMS, Expertise.COMPUTER_NETWORKS), 4, 2, 4.7);
-            createVirtualTutor("tutor018", "Pham Thi Thao", "thao.pham@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor018", "Phạm Thị Thảo", "thao.pham@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MOBILE_DEVELOPMENT, Expertise.WEB_DEVELOPMENT), 5, 2, 4.5);
-            createVirtualTutor("tutor019", "Le Van Uyen", "uyen.le@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor019", "Lê Văn Uyên", "uyen.le@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MACHINE_LEARNING, Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE), 6, 5, 4.9);
-            createVirtualTutor("tutor020", "Tran Thi Van", "van.tran@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor020", "Trần Thị Vân", "van.tran@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 4, 3, 4.6);
-            createVirtualTutor("tutor021", "Nguyen Van Xuan", "xuan.nguyen@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor021", "Nguyễn Văn Xuân", "xuan.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING, Expertise.ALGORITHMS), 5, 2, 4.7);
-            createVirtualTutor("tutor022", "Vo Thi Yen", "yen.vo@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor022", "Võ Thị Yến", "yen.vo@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.MACHINE_LEARNING), 6, 4, 4.8);
-            createVirtualTutor("tutor023", "Dang Van An", "an.dang@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor023", "Đặng Văn An", "an.dang@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.SOFTWARE_ENGINEERING), 4, 2, 4.5);
-            createVirtualTutor("tutor024", "Bui Thi Bao", "bao.bui@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor024", "Bùi Thị Bảo", "bao.bui@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.DATA_SCIENCE, Expertise.ALGORITHMS), 5, 3, 4.6);
-            createVirtualTutor("tutor025", "Ngo Van Cao", "cao.ngo@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor025", "Ngô Văn Cao", "cao.ngo@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MOBILE_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING), 4, 2, 4.7);
-            createVirtualTutor("tutor026", "Do Thi Dao", "dao.do@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor026", "Đỗ Thị Đào", "dao.do@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 5, 3, 4.5);
-            createVirtualTutor("tutor027", "Truong Van Hai", "hai.truong@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor027", "Trương Văn Hải", "hai.truong@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE), 6, 5, 4.9);
-            createVirtualTutor("tutor028", "Nguyen Thi Hue", "hue.nguyen@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor028", "Nguyễn Thị Huệ", "hue.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ALGORITHMS, Expertise.ARTIFICIAL_INTELLIGENCE), 4, 2, 4.6);
-            createVirtualTutor("tutor029", "Phan Van Khoa", "khoa.phan@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor029", "Phan Văn Khoa", "khoa.phan@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.COMPUTER_NETWORKS, Expertise.ALGORITHMS), 5, 3, 4.8);
-            createVirtualTutor("tutor030", "Le Thi Lan", "lan.le@hcmut.edu.vn", Department.CS,
+            createVirtualTutor("tutor030", "Lê Thị Lan", "lan.le@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.SOFTWARE_ENGINEERING, Expertise.WEB_DEVELOPMENT), 4, 2, 4.5);
 
             // Computer Engineering Department (20 tutors)
-            createVirtualTutor("tutor031", "Tran Van Minh", "minh.tran@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor031", "Trần Văn Minh", "minh.tran@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 6, 4, 4.9);
-            createVirtualTutor("tutor032", "Hoang Thi Nga", "nga.hoang@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor032", "Hoàng Thị Nga", "nga.hoang@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.7);
-            createVirtualTutor("tutor033", "Nguyen Van Phong", "phong.nguyen@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor033", "Nguyễn Văn Phong", "phong.nguyen@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 4, 2, 4.6);
-            createVirtualTutor("tutor034", "Pham Thi Quynh", "quynh.pham@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor034", "Phạm Thị Quỳnh", "quynh.pham@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.8);
-            createVirtualTutor("tutor035", "Le Van Tam", "tam.le@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor035", "Lê Văn Tâm", "tam.le@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 6, 5, 4.9);
-            createVirtualTutor("tutor036", "Tran Thi Uyen", "uyen.tran@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor036", "Trần Thị Uyên", "uyen.tran@hcmut.edu.vn", Department.CE,
                     List.of( Expertise.EMBEDDED_SYSTEMS), 4, 2, 4.5);
-            createVirtualTutor("tutor037", "Nguyen Van Vinh", "vinh.nguyen@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor037", "Nguyễn Văn Vinh", "vinh.nguyen@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 5, 3, 4.7);
-            createVirtualTutor("tutor038", "Vo Thi Xuan", "xuan.vo@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor038", "Võ Thị Xuân", "xuan.vo@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 4, 2, 4.6);
-            createVirtualTutor("tutor039", "Dang Van Yen", "yen.dang@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor039", "Đặng Văn Yến", "yen.dang@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.CONTROL_SYSTEMS), 6, 4, 4.8);
-            createVirtualTutor("tutor040", "Bui Thi Anh", "anh.bui@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor040", "Bùi Thị Anh", "anh.bui@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 5, 3, 4.7);
-            createVirtualTutor("tutor041", "Ngo Van Binh", "binh.ngo@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor041", "Ngô Văn Bình", "binh.ngo@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS), 4, 2, 4.5);
-            createVirtualTutor("tutor042", "Do Thi Chau", "chau.do@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor042", "Đỗ Thị Châu", "chau.do@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 5, 3, 4.6);
-            createVirtualTutor("tutor043", "Truong Van Dung", "dung.truong@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor043", "Trương Văn Dũng", "dung.truong@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 6, 5, 4.9);
-            createVirtualTutor("tutor044", "Nguyen Thi Giang", "giang.nguyen@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor044", "Nguyễn Thị Giang", "giang.nguyen@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING), 4, 2, 4.7);
-            createVirtualTutor("tutor045", "Phan Van Hung", "hung.phan@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor045", "Phan Văn Hùng", "hung.phan@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS), 5, 3, 4.6);
-            createVirtualTutor("tutor046", "Le Thi Khanh", "khanh.le@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor046", "Lê Thị Khánh", "khanh.le@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS), 4, 2, 4.8);
-            createVirtualTutor("tutor047", "Tran Van Lam", "lam.tran@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor047", "Trần Văn Lâm", "lam.tran@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS, Expertise.EMBEDDED_SYSTEMS), 6, 4, 4.9);
-            createVirtualTutor("tutor048", "Hoang Thi My", "my.hoang@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor048", "Hoàng Thị Mỹ", "my.hoang@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.5);
-            createVirtualTutor("tutor049", "Nguyen Van Nghia", "nghia.nguyen@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor049", "Nguyễn Văn Nghĩa", "nghia.nguyen@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING), 4, 2, 4.7);
-            createVirtualTutor("tutor050", "Pham Thi Oanh", "oanh.pham@hcmut.edu.vn", Department.CE,
+            createVirtualTutor("tutor050", "Phạm Thị Oanh", "oanh.pham@hcmut.edu.vn", Department.CE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 5, 3, 4.6);
 
             // Electronic Engineering Department (20 tutors)
-            createVirtualTutor("tutor051", "Le Van Phuc", "phuc.le@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor051", "Lê Văn Phúc", "phuc.le@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 6, 4, 4.9);
-            createVirtualTutor("tutor052", "Tran Thi Quy", "quy.tran@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor052", "Trần Thị Quý", "quy.tran@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 5, 3, 4.7);
-            createVirtualTutor("tutor053", "Nguyen Van Son", "son.nguyen@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor053", "Nguyễn Văn Sơn", "son.nguyen@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS), 4, 2, 4.6);
-            createVirtualTutor("tutor054", "Vo Thi Thu", "thu.vo@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor054", "Võ Thị Thu", "thu.vo@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.8);
-            createVirtualTutor("tutor055", "Dang Van Tuan", "tuan.dang@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor055", "Đặng Văn Tuấn", "tuan.dang@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 6, 5, 4.9);
-            createVirtualTutor("tutor056", "Bui Thi Van", "van.bui@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor056", "Bùi Thị Vân", "van.bui@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 4, 2, 4.5);
-            createVirtualTutor("tutor057", "Ngo Van Xuan", "xuan.ngo@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor057", "Ngô Văn Xuân", "xuan.ngo@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING), 5, 3, 4.7);
-            createVirtualTutor("tutor058", "Do Thi Yen", "yen.do@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor058", "Đỗ Thị Yến", "yen.do@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS), 4, 2, 4.6);
-            createVirtualTutor("tutor059", "Truong Van An", "an.truong@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor059", "Trương Văn An", "an.truong@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS), 6, 4, 4.8);
-            createVirtualTutor("tutor060", "Nguyen Thi Bich", "bich.nguyen@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor060", "Nguyễn Thị Bích", "bich.nguyen@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING), 5, 3, 4.7);
-            createVirtualTutor("tutor061", "Phan Van Cuong", "cuong.phan@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor061", "Phan Văn Cường", "cuong.phan@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS), 4, 2, 4.5);
-            createVirtualTutor("tutor062", "Le Thi Duyen", "duyen.le@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor062", "Lê Thị Duyên", "duyen.le@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.6);
-            createVirtualTutor("tutor063", "Tran Van Hieu", "hieu.tran@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor063", "Trần Văn Hiếu", "hieu.tran@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS), 6, 5, 4.9);
-            createVirtualTutor("tutor064", "Hoang Thi Kim", "kim.hoang@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor064", "Hoàng Thị Kim", "kim.hoang@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 4, 2, 4.7);
-            createVirtualTutor("tutor065", "Nguyen Van Loc", "loc.nguyen@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor065", "Nguyễn Văn Lộc", "loc.nguyen@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.6);
-            createVirtualTutor("tutor066", "Pham Thi Minh", "minh.pham@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor066", "Phạm Thị Minh", "minh.pham@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 4, 2, 4.8);
-            createVirtualTutor("tutor067", "Le Van Nhat", "nhat.le@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor067", "Lê Văn Nhật", "nhat.le@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 6, 4, 4.9);
-            createVirtualTutor("tutor068", "Tran Thi Phuong", "phuong.tran@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor068", "Trần Thị Phương", "phuong.tran@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.CONTROL_SYSTEMS, Expertise.EMBEDDED_SYSTEMS), 5, 3, 4.5);
-            createVirtualTutor("tutor069", "Nguyen Van Quang", "quang.nguyen@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor069", "Nguyễn Văn Quang", "quang.nguyen@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.SIGNAL_PROCESSING, Expertise.CONTROL_SYSTEMS), 4, 2, 4.7);
-            createVirtualTutor("tutor070", "Vo Thi Thanh", "thanh.vo@hcmut.edu.vn", Department.EE,
+            createVirtualTutor("tutor070", "Võ Thị Thanh", "thanh.vo@hcmut.edu.vn", Department.EE,
                     List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.SIGNAL_PROCESSING), 5, 3, 4.6);
 
-            // Mechanical Engineering Department (15 tutors)
-            createVirtualTutor("tutor071", "Dang Van Tien", "tien.dang@hcmut.edu.vn", Department.ME,
+// Mechanical Engineering Department (15 tutors)
+            createVirtualTutor("tutor071", "Đặng Văn Tiến", "tien.dang@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 6, 4, 4.8);
-            createVirtualTutor("tutor072", "Bui Thi Uyen", "uyen.bui@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor072", "Bùi Thị Uyên", "uyen.bui@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.MATERIALS_SCIENCE), 5, 3, 4.7);
-            createVirtualTutor("tutor073", "Ngo Van Vinh", "vinh.ngo@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor073", "Ngô Văn Vinh", "vinh.ngo@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 4, 2, 4.6);
-            createVirtualTutor("tutor074", "Do Thi Xuan", "xuan.do@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor074", "Đỗ Thị Xuân", "xuan.do@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.THERMODYNAMICS), 5, 3, 4.5);
-            createVirtualTutor("tutor075", "Truong Van Yen", "yen.truong@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor075", "Trương Văn Yến", "yen.truong@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.MECHANICAL_DESIGN), 6, 5, 4.9);
-            createVirtualTutor("tutor076", "Nguyen Thi Anh", "anh.nguyen2@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor076", "Nguyễn Thị Ánh", "anh.nguyen2@hcmut.edu.vn", Department.ME, // Email adjusted for potential uniqueness
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 4, 2, 4.7);
-            createVirtualTutor("tutor077", "Phan Van Binh", "binh.phan@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor077", "Phan Văn Bình", "binh.phan@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.MATERIALS_SCIENCE), 5, 3, 4.6);
-            createVirtualTutor("tutor078", "Le Thi Chau", "chau.le@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor078", "Lê Thị Châu", "chau.le@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 4, 2, 4.8);
-            createVirtualTutor("tutor079", "Tran Van Duy", "duy.tran@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor079", "Trần Văn Duy", "duy.tran@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.THERMODYNAMICS, Expertise.MATERIALS_SCIENCE), 6, 4, 4.9);
-            createVirtualTutor("tutor080", "Hoang Thi Ha", "ha.hoang@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor080", "Hoàng Thị Hà", "ha.hoang@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.MECHANICAL_DESIGN), 5, 3, 4.5);
-            createVirtualTutor("tutor081", "Nguyen Van Kien", "kien.nguyen@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor081", "Nguyễn Văn Kiên", "kien.nguyen@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 4, 2, 4.7);
-            createVirtualTutor("tutor082", "Pham Thi Linh", "linh.pham@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor082", "Phạm Thị Linh", "linh.pham@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.MATERIALS_SCIENCE), 5, 3, 4.6);
-            createVirtualTutor("tutor083", "Le Van Manh", "manh.le@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor083", "Lê Văn Mạnh", "manh.le@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.THERMODYNAMICS, Expertise.MECHANICAL_DESIGN), 6, 5, 4.8);
-            createVirtualTutor("tutor084", "Tran Thi Nga", "nga.tran@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor084", "Trần Thị Nga", "nga.tran@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MECHANICAL_DESIGN, Expertise.THERMODYNAMICS), 4, 2, 4.5);
-            createVirtualTutor("tutor085", "Nguyen Van Phat", "phat.nguyen@hcmut.edu.vn", Department.ME,
+            createVirtualTutor("tutor085", "Nguyễn Văn Phát", "phat.nguyen@hcmut.edu.vn", Department.ME,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.MECHANICAL_DESIGN), 5, 3, 4.7);
 
-            // Chemical Engineering Department (15 tutors)
-            createVirtualTutor("tutor086", "Vo Thi Quynh", "quynh.vo2@hcmut.edu.vn", Department.CH,
+// Chemical Engineering Department (15 tutors)
+            createVirtualTutor("tutor086", "Võ Thị Quỳnh", "quynh.vo2@hcmut.edu.vn", Department.CH, // Email adjusted
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 6, 4, 4.8);
-            createVirtualTutor("tutor087", "Dang Van Sang", "sang.dang@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor087", "Đặng Văn Sang", "sang.dang@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 5, 3, 4.7);
-            createVirtualTutor("tutor088", "Bui Thi Thuy", "thuy.bui@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor088", "Bùi Thị Thủy", "thuy.bui@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 4, 2, 4.6);
-            createVirtualTutor("tutor089", "Ngo Van Tung", "tung.ngo@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor089", "Ngô Văn Tùng", "tung.ngo@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 5, 3, 4.5);
-            createVirtualTutor("tutor090", "Do Thi Van", "van.do2@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor090", "Đỗ Thị Vân", "van.do2@hcmut.edu.vn", Department.CH, // Email adjusted
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 6, 5, 4.9);
-            createVirtualTutor("tutor091", "Truong Van Xuan", "xuan.truong2@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor091", "Trương Văn Xuân", "xuan.truong2@hcmut.edu.vn", Department.CH, // Email adjusted
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 4, 2, 4.7);
-            createVirtualTutor("tutor092", "Nguyen Thi Yen", "yen.nguyen@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor092", "Nguyễn Thị Yến", "yen.nguyen@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 5, 3, 4.6);
-            createVirtualTutor("tutor093", "Phan Van Anh", "anh.phan@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor093", "Phan Văn Anh", "anh.phan@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 4, 2, 4.8);
-            createVirtualTutor("tutor094", "Le Thi Bao", "bao.le@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor094", "Lê Thị Bảo", "bao.le@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 6, 4, 4.9);
-            createVirtualTutor("tutor095", "Tran Van Cuong", "cuong.tran2@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor095", "Trần Văn Cường", "cuong.tran2@hcmut.edu.vn", Department.CH, // Email adjusted
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 5, 3, 4.5);
-            createVirtualTutor("tutor096", "Hoang Thi Diem", "diem.hoang@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor096", "Hoàng Thị Diễm", "diem.hoang@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 4, 2, 4.7);
-            createVirtualTutor("tutor097", "Nguyen Van Huy", "huy.nguyen@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor097", "Nguyễn Văn Huy", "huy.nguyen@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 5, 3, 4.6);
-            createVirtualTutor("tutor098", "Pham Thi Kieu", "kieu.pham@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor098", "Phạm Thị Kiều", "kieu.pham@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 6, 5, 4.8);
-            createVirtualTutor("tutor099", "Le Van Long", "long.le@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor099", "Lê Văn Long", "long.le@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.MATERIALS_SCIENCE, Expertise.PROCESS_ENGINEERING), 4, 2, 4.5);
-            createVirtualTutor("tutor100", "Tran Thi Mai", "mai.tran@hcmut.edu.vn", Department.CH,
+            createVirtualTutor("tutor100", "Trần Thị Mai", "mai.tran@hcmut.edu.vn", Department.CH,
                     List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE), 5, 3, 4.7);
 
             System.out.println("Successfully created 100 virtual tutors!");
@@ -358,16 +359,25 @@ public class AdminBootstrapService implements CommandLineRunner {
             // Create user profile
             String passwordHash = passwordEncoder.encode("tutor123");
             String username = getLocalPart(email);
-            
+
+            //Generate avatarURL
+            String avatarUrl = "https://i.pravatar.cc/150?u=" + tutorId;
+
+            String[] nameParts = fullName.split(" ");
+            String firstName = (nameParts.length > 0) ? nameParts[nameParts.length - 1] : "";
+            String lastName = (nameParts.length > 1) ?
+                    String.join(" ", Arrays.copyOfRange(nameParts, 0, nameParts.length - 1)) :
+                    ""; // Hoặc gán bằng nameParts[0] nếu muốn có họ khi chỉ có 1 từ
+
             User tutorUser = new User(
-                tutorId,
-                fullName.split(" ")[0], // firstName
-                fullName.split(" ")[fullName.split(" ").length - 1], // lastName
-                department,
-                List.of(Role.TUTOR),
-                username,
-                null, // avatarUrl
-                passwordHash
+                    tutorId,
+                    firstName, // Tên
+                    lastName,  // Họ và tên đệm
+                    department,
+                    List.of(Role.TUTOR),
+                    username,
+                    avatarUrl,
+                    passwordHash
             );
             
             userRepository.save(tutorUser);
