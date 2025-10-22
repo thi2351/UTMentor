@@ -1,7 +1,5 @@
 package com.example.utmentor.presentation.controllers;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -15,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.utmentor.infrastructures.securities.JwtService;
-import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
+import com.example.utmentor.models.webModels.users.CreateUserRequest;
+import com.example.utmentor.models.webModels.users.CreateUserResponse;
 import com.example.utmentor.models.webModels.users.LoginRequest;
 import com.example.utmentor.models.webModels.users.LoginResponse;
 import com.example.utmentor.services.AuthService;
@@ -27,8 +26,6 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import com.example.utmentor.models.webModels.users.CreateUserRequest;
-import com.example.utmentor.models.webModels.users.CreateUserResponse;
 @CrossOrigin(
         origins = {"http://localhost:5173"},
         allowCredentials = "true"
@@ -83,16 +80,14 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
-
-        //Find user
         User result = _authService.login(request);
 
         //Generate accessToken
         Map<String, Object> accessClaim = _authService.createAcessTokenClaim(result);
-        String accessToken = _jwtService.generateToken(result.getId(), accessClaim);
+        String accessToken = _jwtService.generateToken(result.getId(), accessClaim,false);
         //Generate refreshToken
         Map<String, Object> refreshClaims = _authService.createRefreshTokenClaim(result);
-        String refreshToken = _jwtService.generateToken(result.getId(), refreshClaims);
+        String refreshToken = _jwtService.generateToken(result.getId(), refreshClaims,true);
 
 
         // Build HttpOnly cookies
@@ -101,7 +96,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(15)         // 15 minutes
+                .maxAge(60*15)         // 15 minutes
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
@@ -115,6 +110,7 @@ public class AuthController {
         // Attach cookies to the response
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         // Build response with tokens
         LoginResponse loginResponse = LoginResponse.builder()
@@ -154,7 +150,7 @@ public class AuthController {
         
         // Generate new access token
         Map<String, Object> claims = _authService.createAcessTokenClaim(user);
-        String newAccessToken = _jwtService.generateToken(user.getId(), claims);
+        String newAccessToken = _jwtService.generateToken(user.getId(), claims, false);
         
         // Update access token cookie
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", newAccessToken)
@@ -162,10 +158,11 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(15 * 60) // 15 minutes
+                .maxAge(5) // 5 seconds
                 .build();
         
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken);
         
         // Return new access token in response
         LoginResponse loginResponse = LoginResponse.builder()
@@ -176,6 +173,7 @@ public class AuthController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @PermitAll
     @PostMapping("logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         // Clear both access and refresh token cookies

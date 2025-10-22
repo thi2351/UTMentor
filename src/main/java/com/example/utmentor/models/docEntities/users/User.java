@@ -4,16 +4,19 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.example.utmentor.models.docEntities.Department;
 import com.example.utmentor.models.docEntities.Role;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+@Document(collection = "users")
 public class User {
-    @NotBlank @Indexed(unique = true)
+    @Id
+    @NotBlank
     String id;
 
     @NotBlank
@@ -28,8 +31,7 @@ public class User {
 
     String avatarUrl=null;
 
-    @NotBlank @Email @Indexed(unique = true)
-    String email;
+    String description;
 
     @NotBlank @Indexed(unique = true)
     String username;
@@ -37,15 +39,13 @@ public class User {
     @NotBlank
     String passwordHash;
 
-    StudentProfile studentProfile;
-
-    TutorProfile tutorProfile;
-
     boolean isActive = false;
 
     boolean isDeleted = false;
 
     Instant createdAt = Instant.now();
+    
+    Instant updatedAt = Instant.now();
 
 
     public User(String id,
@@ -53,22 +53,16 @@ public class User {
                 String lastName,
                 Department department,
                 List<Role> roles,
-                String email,
                 String username,
                 String avatarUrl,
-                String passwordHash,
-                StudentProfile studentProfile,
-                TutorProfile tutorProfile) {
+                String passwordHash) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.department = department;
         this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
-        this.email = email;
         this.username = username;
         this.passwordHash = passwordHash;
-        this.studentProfile = studentProfile;
-        this.tutorProfile = tutorProfile;
         this.avatarUrl = avatarUrl;
     }
 
@@ -78,6 +72,7 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+        this.updatedAt = Instant.now();
     }
 
     public String getId() {
@@ -86,6 +81,7 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+        this.updatedAt = Instant.now();
     }
 
     public String getLastName() {
@@ -94,6 +90,7 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        this.updatedAt = Instant.now();
     }
 
     public Department getDepartment() {
@@ -102,6 +99,7 @@ public class User {
 
     public void setDepartment(Department department) {
         this.department = department;
+        this.updatedAt = Instant.now();
     }
 
     public List<Role> getRoles() {
@@ -110,6 +108,7 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
+        this.updatedAt = Instant.now();
     }
     
     // Convenience methods for single role operations
@@ -150,14 +149,21 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+        this.updatedAt = Instant.now();
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        this.updatedAt = Instant.now();
+    }
+
+    // Generate email from username
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        return username + "@hcmut.edu.vn";
     }
 
     public String getUsername() {
@@ -166,6 +172,7 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+        this.updatedAt = Instant.now();
     }
 
     public String getPasswordHash() {
@@ -174,21 +181,50 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+        this.updatedAt = Instant.now();
     }
 
-    public TutorProfile getTutorProfile() {
-        return tutorProfile;
+    // Helper methods for profile management
+    public boolean hasTutorProfile() {
+        return roles.contains(Role.TUTOR);
     }
-
-    public void setTutorProfile(TutorProfile tutorProfile) {
-        this.tutorProfile = tutorProfile;
+    
+    public boolean hasStudentProfile() {
+        return roles.contains(Role.STUDENT);
     }
-
-    public StudentProfile getStudentProfile() {
-        return studentProfile;
+    
+    public boolean isActive() {
+        return isActive;
     }
-
-    public void setStudentProfile(StudentProfile studentProfile) {
-        this.studentProfile = studentProfile;
+    
+    public void setActive(boolean active) {
+        this.isActive = active;
+        this.updatedAt = Instant.now();
+    }
+    
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+    
+    public void setDeleted(boolean deleted) {
+        this.isDeleted = deleted;
+        this.updatedAt = Instant.now();
+    }
+    
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+        this.updatedAt = Instant.now();
+    }
+    
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
