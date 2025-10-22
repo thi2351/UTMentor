@@ -40,10 +40,17 @@ public class TutorSearchService {
 //        }
 //
         // Validate sort parameter
-        if (sort != null && !sort.equals("rating-descending") && !sort.equals("tutor-time")) {
-            validatorException.add("sort", 
-            "INVALID_SORT", 
-            "Sort must be 'rating-descending' or 'tutor-time'");
+        if (sort != null &&
+                !sort.equals("rating-descending") &&
+                !sort.equals("rating-ascending") &&
+                !sort.equals("firstName-ascending") &&
+                !sort.equals("firstName-descending") &&
+                !sort.equals("tutor-time")) {
+
+            // Cập nhật thông báo lỗi để bao gồm các giá trị mới
+            validatorException.add("sort",
+                    "INVALID_SORT",
+                    "Sort must be 'rating-descending', 'rating-ascending', 'firstName-ascending', 'firstName-descending', or 'tutor-time'");
         }
         
         // Set default sort
