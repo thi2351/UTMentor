@@ -32,37 +32,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = resolveToken(request);
-
-        // Không có token -> cho đi tiếp; endpoint cần auth sẽ bị 401 từ EntryPoint
         if (token == null || token.isBlank()) {
             chain.doFilter(request, response);
             return;
         }
 
         try {
-            // parse + verify; ném ExpiredJwtException nếu hết hạn
-            var claims = jwtService.parseAndValidate(token);
-
-            String usernameOrId = claims.getSubject();
-
-            // Lấy roles từ claims (List<String> hoặc String csv)
-            var authorities = jwtService.extractAuthorities(claims); // xem bên dưới
+            var claims = jwtService.parseAndValidate(token); // throws ExpiredJwtException on exp
+            var authorities = jwtService.extractAuthorities(claims);
 
             var auth = new UsernamePasswordAuthenticationToken(
-                    usernameOrId, null, authorities);
+                    claims.getSubject(), null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             chain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.ExpiredJwtException ex) {
-            //Token hết hạn trả isExpired = true
+            // mark as expired
             SecurityContextHolder.clearContext();
-            writeJson(response, HttpServletResponse.SC_UNAUTHORIZED,
-                    "{\"isExpired\":true}");
+            request.setAttribute("JWT_EXPIRED", true);
+            chain.doFilter(request, response);
+
         } catch (io.jsonwebtoken.JwtException ex) {
+            // invalid token; proceed as anonymous
             SecurityContextHolder.clearContext();
-            writeJson(response, HttpServletResponse.SC_UNAUTHORIZED, null);
+            chain.doFilter(request, response);
         }
     }
 
@@ -76,12 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-    private void writeJson(HttpServletResponse res, int status, String json) throws IOException {
-        res.setStatus(status);
-        res.setContentType("application/json");
-        res.setCharacterEncoding("UTF-8");
-        res.getWriter().write(json);
-    }
 }
+
 
