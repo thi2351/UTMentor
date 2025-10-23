@@ -34,7 +34,7 @@ public class JwtService {
     public String generateToken(String subject, Map<String, Object> claims, boolean isRefresh) {
         Instant now = Instant.now();
 //        long duration = 60*expirationMinutes;
-        long duration = 5;
+        long duration = 60*5;
         if (isRefresh) duration *= 1344; //convert from 15 mins to 14 days
         Instant exp = now.plusSeconds(duration);
         

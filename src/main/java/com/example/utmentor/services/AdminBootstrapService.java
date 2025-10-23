@@ -135,9 +135,9 @@ public class AdminBootstrapService implements CommandLineRunner {
 
             // Computer Science Department (30 tutors)
             createVirtualTutor("tutor001", "Nguyễn Văn An", "an.nguyen@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE), 5, 3, 4.8);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE), 5, 3, 4.8);
             createVirtualTutor("tutor002", "Trần Thị Bình", "binh.tran@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.SOFTWARE_ENGINEERING, Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN), 4, 2, 4.6);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN), 4, 2, 4.6);
             createVirtualTutor("tutor003", "Lê Văn Cường", "cuong.le@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ALGORITHMS, Expertise.DATA_SCIENCE, Expertise.ARTIFICIAL_INTELLIGENCE), 6, 4, 4.9);
             createVirtualTutor("tutor004", "Phạm Thị Dung", "dung.pham@hcmut.edu.vn", Department.CS,
@@ -147,7 +147,7 @@ public class AdminBootstrapService implements CommandLineRunner {
             createVirtualTutor("tutor006", "Võ Thị Phương", "phuong.vo@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 5, 3, 4.7);
             createVirtualTutor("tutor007", "Đặng Văn Quang", "quang.dang@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE, Expertise.ALGORITHMS), 6, 4, 4.8);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE, Expertise.ALGORITHMS), 6, 4, 4.8);
             createVirtualTutor("tutor008", "Bùi Thị Hòa", "hoa.bui@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE), 5, 2, 4.6);
             createVirtualTutor("tutor009", "Ngô Văn Ính", "inh.ngo@hcmut.edu.vn", Department.CS, // Note: Ính is less common, ensure it's correct
@@ -161,7 +161,7 @@ public class AdminBootstrapService implements CommandLineRunner {
             createVirtualTutor("tutor013", "Phan Văn Nam", "nam.phan@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.MOBILE_DEVELOPMENT, Expertise.DATABASE_DESIGN), 5, 3, 4.7);
             createVirtualTutor("tutor014", "Lê Thị Oanh", "oanh.le@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.DATA_SCIENCE, Expertise.MACHINE_LEARNING), 4, 2, 4.5);
+                    List.of(Expertise.DATA_SCIENCE, Expertise.ARTIFICIAL_INTELLIGENCE), 4, 2, 4.5);
             createVirtualTutor("tutor015", "Trần Văn Phúc", "phuc.tran@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ALGORITHMS), 6, 4, 4.8);
             createVirtualTutor("tutor016", "Hoàng Thị Quỳnh", "quynh.hoang@hcmut.edu.vn", Department.CS,
@@ -171,13 +171,13 @@ public class AdminBootstrapService implements CommandLineRunner {
             createVirtualTutor("tutor018", "Phạm Thị Thảo", "thao.pham@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.MOBILE_DEVELOPMENT, Expertise.WEB_DEVELOPMENT), 5, 2, 4.5);
             createVirtualTutor("tutor019", "Lê Văn Uyên", "uyen.le@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.MACHINE_LEARNING, Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE), 6, 5, 4.9);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE), 6, 5, 4.9);
             createVirtualTutor("tutor020", "Trần Thị Vân", "van.tran@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 4, 3, 4.6);
             createVirtualTutor("tutor021", "Nguyễn Văn Xuân", "xuan.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.SOFTWARE_ENGINEERING, Expertise.ALGORITHMS), 5, 2, 4.7);
             createVirtualTutor("tutor022", "Võ Thị Yến", "yen.vo@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.MACHINE_LEARNING), 6, 4, 4.8);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ARTIFICIAL_INTELLIGENCE), 6, 4, 4.8);
             createVirtualTutor("tutor023", "Đặng Văn An", "an.dang@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.CYBERSECURITY, Expertise.SOFTWARE_ENGINEERING), 4, 2, 4.5);
             createVirtualTutor("tutor024", "Bùi Thị Bảo", "bao.bui@hcmut.edu.vn", Department.CS,
@@ -187,7 +187,7 @@ public class AdminBootstrapService implements CommandLineRunner {
             createVirtualTutor("tutor026", "Đỗ Thị Đào", "dao.do@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING), 5, 3, 4.5);
             createVirtualTutor("tutor027", "Trương Văn Hải", "hai.truong@hcmut.edu.vn", Department.CS,
-                    List.of(Expertise.MACHINE_LEARNING, Expertise.DATA_SCIENCE), 6, 5, 4.9);
+                    List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.DATA_SCIENCE), 6, 5, 4.9);
             createVirtualTutor("tutor028", "Nguyễn Thị Huệ", "hue.nguyen@hcmut.edu.vn", Department.CS,
                     List.of(Expertise.ALGORITHMS, Expertise.ARTIFICIAL_INTELLIGENCE), 4, 2, 4.6);
             createVirtualTutor("tutor029", "Phan Văn Khoa", "khoa.phan@hcmut.edu.vn", Department.CS,
@@ -424,7 +424,7 @@ public class AdminBootstrapService implements CommandLineRunner {
             
             // Virtual Student: Computer Science Student
             createVirtualStudent(
-                "student001", "Tran Thi Lan", "lan.tran@hcmut.edu.vn", Department.CS,
+                "student001", "Trần Thị Lan", "lan.tran@hcmut.edu.vn", Department.CS,
                 "20123456"
             );
             
