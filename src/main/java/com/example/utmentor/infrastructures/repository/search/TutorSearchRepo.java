@@ -1,29 +1,31 @@
 package com.example.utmentor.infrastructures.repository.search;
 
 import java.util.ArrayList;
-import java.util.Arrays; // Keep this import
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
-import org.bson.types.ObjectId; // Keep this import
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate; // Ensure this import is present
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators; // Import for comparing fields
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.aggregation.SkipOperation;
 import org.springframework.data.mongodb.core.aggregation.LimitOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation; // Use TypedAggregation for clarity
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
-// Keep these imports
+// Import Collation từ Spring Data MongoDB
+import org.springframework.data.mongodb.core.query.Collation;
+
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.models.docEntities.Department;
 import com.example.utmentor.models.docEntities.Expertise;
@@ -35,10 +37,13 @@ import com.example.utmentor.models.webModels.search.TutorListItem;
 public class TutorSearchRepo {
 
     @Autowired
-    private UserRepository userRepository; // Keep if needed for conversion, though aggregation is better
+    private UserRepository userRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    // Tạo Collation cho tiếng Việt sử dụng Spring Data MongoDB
+    private static final Collation VIETNAMESE_COLLATION = Collation.of("vi");
 
     public PageResponse<TutorListItem> search(
             Department department,
@@ -51,117 +56,89 @@ public class TutorSearchRepo {
         int sz = Math.min(Math.max(1, pageSize), 100);
         long skip = (long) (p - 1) * sz;
 
-        // ============================================================
-        // 1️⃣ Build the common filter pipeline stages
-        // ============================================================
+        // Build filter pipeline
         List<AggregationOperation> filterPipeline = new ArrayList<>();
 
-        // --- Match TutorProfile Stage ---
         List<Criteria> tutorCriteriaList = new ArrayList<>();
-//        tutorCriteriaList.add(Criteria.where("isActive").is(true));
 
-        // CORRECT way to compare two fields using $expr
         Criteria capacityCriteria = Criteria.where("$expr").is(
                 ComparisonOperators.Lt.valueOf("$currentMenteeCount").lessThan("$maximumCapacity")
         );
-        tutorCriteriaList.add(capacityCriteria); // Add the $expr criteria
+        tutorCriteriaList.add(capacityCriteria);
 
-        // Add expertise filter if provided
         if (expertiseList != null && !expertiseList.isEmpty()) {
             List<String> expertiseNames = expertiseList.stream()
-                    .map(Enum::name) // Convert Enum to String
+                    .map(Enum::name)
                     .collect(Collectors.toList());
-            tutorCriteriaList.add(Criteria.where("expertise").all(expertiseNames)); // Use List<String>
+            tutorCriteriaList.add(Criteria.where("expertise").all(expertiseNames));
         }
 
-        // Combine all TutorProfile criteria into one $match stage
         MatchOperation matchTutorProfile = Aggregation.match(new Criteria().andOperator(tutorCriteriaList));
         filterPipeline.add(matchTutorProfile);
 
-        // --- $lookup stage to join with users collection ---
-        // Ensure "users" is the correct collection name in your MongoDB
         LookupOperation lookupUser = Aggregation.lookup("users", "_id", "_id", "userDetails");
         filterPipeline.add(lookupUser);
 
-        // --- $unwind stage to deconstruct the userDetails array ---
-        // Using preserveNullAndEmptyArrays = true keeps tutors even if user data is missing (adjust if needed)
         filterPipeline.add(Aggregation.unwind("userDetails", true));
 
-        // --- Match User Stage (if department filter is present) ---
         if (department != null) {
-            // Filter based on the 'department' field inside the joined 'userDetails'
             MatchOperation matchUserDepartment = Aggregation.match(
-                    Criteria.where("userDetails.department").is(department.name()) // Compare with Enum name (String)
+                    Criteria.where("userDetails.department").is(department.name())
             );
             filterPipeline.add(matchUserDepartment);
-            // You could add other user-related filters here if needed, e.g.:
-            // Criteria.where("userDetails.isActive").is(true)
         }
 
-        // ============================================================
-        // 2️⃣ Build and Execute the Count Pipeline
-        // ============================================================
-        List<AggregationOperation> countOps = new ArrayList<>(filterPipeline); // Copy filter stages
-        countOps.add(Aggregation.count().as("totalCount")); // Add the $count stage
+        // Count Pipeline với Collation
+        List<AggregationOperation> countOps = new ArrayList<>(filterPipeline);
+        countOps.add(Aggregation.count().as("totalCount"));
 
-        // Use TypedAggregation for better type safety if possible, otherwise keep Aggregation
-        TypedAggregation<TutorProfile> countAggregation = Aggregation.newAggregation(TutorProfile.class, countOps);
+        TypedAggregation<TutorProfile> countAggregation = Aggregation.newAggregation(TutorProfile.class, countOps)
+                .withOptions(Aggregation.newAggregationOptions()
+                        .collation(VIETNAMESE_COLLATION)
+                        .build());
 
-        AggregationResults<Document> countResult = mongoTemplate.aggregate(countAggregation, Document.class); // Output type is Document
+        AggregationResults<Document> countResult = mongoTemplate.aggregate(countAggregation, Document.class);
 
         Document countDoc = countResult.getUniqueMappedResult();
-        long total = 0; // Default to 0
+        long total = 0;
         if (countDoc != null && countDoc.containsKey("totalCount")) {
-            // Safely get the count value
             Object countValue = countDoc.get("totalCount");
-            if (countValue instanceof Number num) { // Check if it's a number
+            if (countValue instanceof Number num) {
                 total = num.longValue();
             }
         }
 
-        // Optimization: If count is 0, return early
         if (total == 0) {
             return new PageResponse<>(new ArrayList<>(), p, sz, 0, 0, false);
         }
 
-        // ============================================================
-        // 3️⃣ Build and Execute the Data Pipeline (with Sort & Pagination)
-        // ============================================================
-        List<AggregationOperation> dataOps = new ArrayList<>(filterPipeline); // Copy filter stages again
+        // Data Pipeline với Collation
+        List<AggregationOperation> dataOps = new ArrayList<>(filterPipeline);
 
-        // Add Sort stage
         Sort sort = getSort(sortKey);
         dataOps.add(Aggregation.sort(sort));
 
-        // Add Pagination stages ($skip, $limit)
         dataOps.add(Aggregation.skip(skip));
         dataOps.add(Aggregation.limit(sz));
 
-        // Use TypedAggregation if possible
-        TypedAggregation<TutorProfile> dataAggregation = Aggregation.newAggregation(TutorProfile.class, dataOps);
+        TypedAggregation<TutorProfile> dataAggregation = Aggregation.newAggregation(TutorProfile.class, dataOps)
+                .withOptions(Aggregation.newAggregationOptions()
+                        .collation(VIETNAMESE_COLLATION)
+                        .build());
 
-        AggregationResults<Document> results = mongoTemplate.aggregate(dataAggregation, Document.class); // Output type is Document
+        AggregationResults<Document> results = mongoTemplate.aggregate(dataAggregation, Document.class);
         List<Document> resultDocuments = results.getMappedResults();
 
-        // ============================================================
-        // 4️⃣ Convert results to DTO
-        // ============================================================
         List<TutorListItem> items = resultDocuments.stream()
-                .map(this::convertDocumentToTutorListItem) // Use method reference
+                .map(this::convertDocumentToTutorListItem)
                 .collect(Collectors.toList());
 
-        // ============================================================
-        // 5️⃣ Calculate pagination info and return
-        // ============================================================
         int totalPages = (int) Math.ceil((double) total / sz);
         boolean hasNext = p < totalPages;
 
         return new PageResponse<>(items, p, sz, total, totalPages, hasNext);
     }
 
-    // ============================================================
-    // 🔸 Sort logic (Keep as is, seems correct now)
-    // ============================================================
     private Sort getSort(String sortKey) {
         if (sortKey == null || sortKey.isBlank()) {
             sortKey = "rating-descending";
@@ -174,65 +151,56 @@ public class TutorSearchRepo {
                     Sort.by(Sort.Order.asc("userDetails.firstName"));
             case "firstname-descending" ->
                     Sort.by(Sort.Order.desc("userDetails.firstName"));
-            case "tutor-time" -> // Consider if this logic is still needed/correct
+            case "tutor-time" ->
                     Sort.by(Sort.Order.desc("ratingCount"), Sort.Order.desc("ratingAvg"));
-            default -> // Default to rating-descending
+            default ->
                     Sort.by(Sort.Order.desc("ratingAvg"), Sort.Order.desc("ratingCount"));
         };
     }
 
-    // ============================================================
-    // 🔸 Convert Document → DTO (Keep as is, seems robust now)
-    // ============================================================
     private TutorListItem convertDocumentToTutorListItem(Document doc) {
-        // TutorProfile info
         String id = null;
-        Object idObject = doc.get("_id"); // Get as Object first
+        Object idObject = doc.get("_id");
         if (idObject instanceof ObjectId) {
             id = ((ObjectId) idObject).toHexString();
         } else if (idObject instanceof String s) {
             id = s;
         }
-        // Add more checks if _id could be other types
 
-        List<Expertise> expertise = List.of(); // Default to empty list
-        // Safely get the list and handle potential type issues or null values
+        List<Expertise> expertise = List.of();
         Object expertiseObj = doc.get("expertise");
         if (expertiseObj instanceof List<?> expList) {
             expertise = expList.stream()
-                    .filter(String.class::isInstance) // Ensure elements are Strings
+                    .filter(String.class::isInstance)
                     .map(String.class::cast)
                     .map(name -> {
                         try {
                             return Expertise.valueOf(name);
                         } catch (IllegalArgumentException e) {
-                            System.err.println("WARN: Invalid expertise value found in DB: " + name); // Log invalid values
-                            return null; // Skip invalid values
+                            System.err.println("WARN: Invalid expertise value found in DB: " + name);
+                            return null;
                         }
                     })
-                    .filter(e -> e != null) // Remove nulls resulting from invalid values
+                    .filter(e -> e != null)
                     .collect(Collectors.toList());
         }
 
-
-        Integer ratingCount = doc.getInteger("ratingCount", 0); // Use default value if missing
-        Double ratingAvg = doc.get("ratingAvg", Double.class); // Get as specific type
-        if (ratingAvg == null) ratingAvg = 0.0; // Handle null explicitly
+        Integer ratingCount = doc.getInteger("ratingCount", 0);
+        Double ratingAvg = doc.get("ratingAvg", Double.class);
+        if (ratingAvg == null) ratingAvg = 0.0;
 
         Integer currentMentees = doc.getInteger("currentMenteeCount", 0);
         Integer maxCapacity = doc.getInteger("maximumCapacity", 0);
 
-
-        // User details
-        Document userDetails = doc.get("userDetails", Document.class); // Get as Document
+        Document userDetails = doc.get("userDetails", Document.class);
         String firstName = "";
         String lastName = "";
         String avatarUrl = null;
-        Department departmentEnum = null; // Renamed variable to avoid conflict
+        Department departmentEnum = null;
         String description = null;
 
         if (userDetails != null) {
-            firstName = userDetails.getString("firstName"); // getString handles null safely
+            firstName = userDetails.getString("firstName");
             lastName = userDetails.getString("lastName");
             avatarUrl = userDetails.getString("avatarUrl");
             String departmentStr = userDetails.getString("department");
@@ -240,11 +208,9 @@ public class TutorSearchRepo {
                 try {
                     departmentEnum = Department.valueOf(departmentStr);
                 } catch (IllegalArgumentException e) {
-                    System.err.println("WARN: Invalid department value found in DB: " + departmentStr); // Log invalid values
-                    // Keep departmentEnum as null
+                    System.err.println("WARN: Invalid department value found in DB: " + departmentStr);
                 }
             }
-            // description = userDetails.getString("description"); // Uncomment if User has description
         }
 
         return new TutorListItem(
@@ -252,7 +218,7 @@ public class TutorSearchRepo {
                 firstName,
                 lastName,
                 avatarUrl,
-                departmentEnum, // Use the correctly parsed Enum or null
+                departmentEnum,
                 expertise,
                 ratingCount,
                 ratingAvg,

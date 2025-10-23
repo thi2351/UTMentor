@@ -18,5 +18,3 @@ public record TutorListItem(
     int maxMentee,
     String description
 ) {}
-
-
