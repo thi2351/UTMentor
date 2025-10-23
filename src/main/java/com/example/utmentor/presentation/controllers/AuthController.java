@@ -158,7 +158,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(5) // 5 seconds
+                .maxAge(60*15) // 5 seconds
                 .build();
         
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
