@@ -47,7 +47,7 @@ public class TutorSearchService {
                 !sort.equals("firstName-descending") &&
                 !sort.equals("tutor-time")) {
 
-            // Cập nhật thông báo lỗi để bao gồm các giá trị mới
+            // Exception
             validatorException.add("sort",
                     "INVALID_SORT",
                     "Sort must be 'rating-descending', 'rating-ascending', 'firstName-ascending', 'firstName-descending', or 'tutor-time'");
