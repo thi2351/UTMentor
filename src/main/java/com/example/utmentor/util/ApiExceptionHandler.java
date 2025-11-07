@@ -30,22 +30,29 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ValidatorException.class)
     public ResponseEntity<ProblemDetail> onValidate(ValidatorException ex) {
-        HttpStatusCode status = ex.getHttpCode() != null ? ex.getHttpCode() : HttpStatus.BAD_REQUEST;
+        HttpStatusCode status;
+
+        // Handle specific error codes
+        if (Errors.USER_NOT_FOUND.equals(ex.getMessage())) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (Errors.INVALID_TOKEN.equals(ex.getMessage())) {
+            status = HttpStatus.UNAUTHORIZED;
+        } else {
+            status = ex.getHttpCode() != null ? ex.getHttpCode() : HttpStatus.BAD_REQUEST;
+        }
+
         ProblemDetail pd = ProblemDetail.forStatus(status);
         if (ex.getTitle() != null) pd.setTitle(ex.getTitle());
-        // Không set detail theo yêu cầu
         pd.setProperty("errors", ex.getErrors());
         return ResponseEntity.status(status).body(pd);
     }
 
-
-    // @Valid trên body (DTO) -> 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> onBeanValidation(MethodArgumentNotValidException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         pd.setTitle("Bad Request");
         List<Map<String, String>> items = new ArrayList<>();
-        // Field errors
+
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
             items.add(Map.of(
                     "field", fe.getField(),
@@ -53,7 +60,7 @@ public class ApiExceptionHandler {
                     "message", fe.getDefaultMessage()
             ));
         }
-        // Class-level/Object errors (ví dụ cross-field)
+
         ex.getBindingResult().getGlobalErrors().forEach(oe -> {
             items.add(Map.of(
                     "field", "global",
@@ -65,7 +72,6 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(pd);
     }
 
-    // @Validated trên @RequestParam/@PathVariable/... -> 400
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ProblemDetail> onConstraintViolation(ConstraintViolationException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -80,7 +86,6 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(pd);
     }
 
-    // Binding error cho form-data/query object -> 400
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ProblemDetail> onBindException(BindException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -95,7 +100,6 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(pd);
     }
 
-    // JSON parse lỗi -> 400
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ProblemDetail> onNotReadable(HttpMessageNotReadableException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -106,7 +110,6 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(pd);
     }
 
-    // Unique/constraint từ DB -> 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ProblemDetail> onDataIntegrity(DataIntegrityViolationException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
@@ -117,7 +120,6 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(pd);
     }
 
-    // Catch-all cuối cùng -> 500 (ẩn detail)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> onAny(Exception ex) {
         log.error("Unhandled exception", ex);

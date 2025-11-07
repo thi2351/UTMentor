@@ -46,4 +46,6 @@ public final class Errors {
     
     public static final ErrorItem PASSWORD_REQUIRED =
             new ErrorItem("password", "required", "Password is required.");
+    public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
+    public static final String INVALID_TOKEN = "INVALID_TOKEN";
 }
