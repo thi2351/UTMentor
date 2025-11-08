@@ -10,6 +10,7 @@ import com.example.utmentor.infrastructures.securities.JwtService;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
+import com.example.utmentor.models.webModels.profile.GetIdResponse;
 import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
@@ -102,5 +103,11 @@ public class ProfileService {
             profile.getYearsOfExperience(),
             profile.getAchievements() != null ? profile.getAchievements() : List.of()
         );
+    }
+
+    public GetIdResponse getUserIdByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
+        return new GetIdResponse(user.getId());
     }
 }
