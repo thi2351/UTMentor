@@ -14,6 +14,8 @@ import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
 
+import java.util.List;
+
 @Service
 public class ProfileService {
 
@@ -66,7 +68,7 @@ public class ProfileService {
             user.getLastName(),
             user.getAvatarUrl(),
             user.getEmail(),
-            user.getUsername(),
+            user.getPhoneNumber(),
             user.getDepartment() != null ? user.getDepartment().name() : null,
             studentDTO,
             tutorDTO
@@ -79,7 +81,7 @@ public class ProfileService {
             profile.getCurrentGPA(),
             profile.getStudentDescription(),
             profile.getLearningGoal(),
-            profile.getAchievements(),
+            profile.getAchievements() != null ? profile.getAchievements() : List.of(),
             profile.getDemandCourse() != null
                 ? profile.getDemandCourse().stream().map(Enum::name).toList()
                 : null
@@ -98,7 +100,7 @@ public class ProfileService {
             profile.getRatingCount(),
             profile.getTotalStudentTaught(),
             profile.getYearsOfExperience(),
-            profile.getAchievements()
+            profile.getAchievements() != null ? profile.getAchievements() : List.of()
         );
     }
 }
