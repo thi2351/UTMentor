@@ -2,7 +2,6 @@ package com.example.utmentor.presentation.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.utmentor.models.webModels.profile.GetIdResponse;
 import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
+import com.example.utmentor.models.webModels.profile.TutorReviewsResponse;
 import com.example.utmentor.services.ProfileService;
 
 @RestController
@@ -25,16 +25,9 @@ public class ProfileController {
     private ProfileService profileService;
 
     @GetMapping("/info")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR')")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
             @RequestParam String id) {
-
-<<<<<<< HEAD
-        System.out.println(authorization);
-        ProfileInfoResponse response = profileService.getProfileInfo(id, authorization);
-=======
         ProfileInfoResponse response = profileService.getProfileInfo(id);
->>>>>>> adb772ad171f4ac80dc6544aeb04b246aeb56390
         return ResponseEntity.ok(response);
     }
 
@@ -43,4 +36,21 @@ public class ProfileController {
         GetIdResponse response = profileService.getUserIdByUsername(username);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/info/tutor-reviews")
+    public ResponseEntity<TutorReviewsResponse> getTutorReviews(
+            @RequestParam String id,
+            @RequestParam int page,
+            @RequestParam(required = false, defaultValue = "5") int pageSize,
+            @RequestParam(required = false, defaultValue = "latest") String sort) {
+        try {
+            var reviews = profileService.getTutorReviews(id, page, pageSize, sort);
+            TutorReviewsResponse response = new TutorReviewsResponse(reviews);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }

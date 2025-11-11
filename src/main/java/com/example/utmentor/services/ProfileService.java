@@ -1,20 +1,23 @@
 package com.example.utmentor.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.TutorProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
+import com.example.utmentor.infrastructures.repository.search.RatingSearchRepo;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
+import com.example.utmentor.models.webModels.PageResponse;
 import com.example.utmentor.models.webModels.profile.GetIdResponse;
 import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
+import com.example.utmentor.models.webModels.profile.ReviewResponse;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
-
-import java.util.List;
 
 @Service
 public class ProfileService {
@@ -27,6 +30,9 @@ public class ProfileService {
 
     @Autowired
     private TutorProfileRepository tutorProfileRepository;
+
+    @Autowired
+    private RatingSearchRepo ratingSearchRepo;
 
     public ProfileInfoResponse getProfileInfo(String userId) {
         // Find user
@@ -94,5 +100,18 @@ public class ProfileService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
         return new GetIdResponse(user.getId());
+    }
+
+    public PageResponse<ReviewResponse> getTutorReviews(String tutorId, int page, int pageSize, String sort) {
+        // Validate tutor exists
+        User tutor = userRepository.findById(tutorId)
+                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
+
+        if (!tutor.hasTutorProfile()) {
+            throw new ValidatorException("User is not a tutor");
+        }
+
+        // Use repository to get reviews with aggregation
+        return ratingSearchRepo.findTutorReviewsWithReviewerInfo(tutorId, page, pageSize, sort);
     }
 }
