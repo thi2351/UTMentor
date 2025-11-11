@@ -2,6 +2,7 @@ package com.example.utmentor.presentation.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,10 +26,12 @@ public class ProfileController {
     private ProfileService profileService;
 
     @GetMapping("/info")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('AFFAIR')")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
             @RequestParam String id,
             @RequestHeader(value = "Authorization", required = false) String authorization) {
 
+        System.out.println(authorization);
         ProfileInfoResponse response = profileService.getProfileInfo(id, authorization);
         return ResponseEntity.ok(response);
     }
