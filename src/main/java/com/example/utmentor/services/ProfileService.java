@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.TutorProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
-import com.example.utmentor.infrastructures.securities.JwtService;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
@@ -29,21 +28,7 @@ public class ProfileService {
     @Autowired
     private TutorProfileRepository tutorProfileRepository;
 
-    @Autowired
-    private JwtService jwtService;
-
-    public ProfileInfoResponse getProfileInfo(String userId, String authorization) {
-        // Validate token if provided
-        if (authorization != null && !authorization.isBlank()) {
-            if (!authorization.startsWith("Bearer ")) {
-                throw new ValidatorException(Errors.INVALID_TOKEN);
-            }
-            String token = authorization.substring(7);
-            if (!jwtService.isTokenValid(token)) {
-                throw new ValidatorException(Errors.INVALID_TOKEN);
-            }
-        }
-
+    public ProfileInfoResponse getProfileInfo(String userId) {
         // Find user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));

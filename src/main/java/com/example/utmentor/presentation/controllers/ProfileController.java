@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +25,9 @@ public class ProfileController {
 
     @GetMapping("/info")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
-            @RequestParam String id,
-            @RequestHeader(value = "Authorization", required = false) String authorization) {
+            @RequestParam String id) {
 
-        ProfileInfoResponse response = profileService.getProfileInfo(id, authorization);
+        ProfileInfoResponse response = profileService.getProfileInfo(id);
         return ResponseEntity.ok(response);
     }
 
