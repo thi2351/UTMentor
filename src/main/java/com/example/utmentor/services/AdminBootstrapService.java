@@ -771,12 +771,12 @@ public class AdminBootstrapService implements CommandLineRunner {
             String firstName = (nameParts.length > 0) ? nameParts[nameParts.length - 1] : "";
             String lastName = (nameParts.length > 1) ?
                     String.join(" ", Arrays.copyOfRange(nameParts, 0, nameParts.length - 1)) :
-                    ""; // Hoặc gán bằng nameParts[0] nếu muốn có họ khi chỉ có 1 từ
+                    "";
 
             User tutorUser = new User(
                     tutorId,
-                    firstName, // Tên
-                    lastName,  // Họ và tên đệm
+                    firstName,
+                    lastName,
                     department,
                     List.of(Role.TUTOR),
                     username,
@@ -796,8 +796,8 @@ public class AdminBootstrapService implements CommandLineRunner {
                     department,
                     List.of(Role.TUTOR),
                     email,
-                    null, // studentProfile
-                    null  // tutorProfile - will be set after creating TutorProfile
+                    null,
+                    null
             );
 
             datacoreRepository.save(tutorDatacore);
@@ -806,13 +806,12 @@ public class AdminBootstrapService implements CommandLineRunner {
             TutorProfile tutorProfile = new TutorProfile(
                     tutorId,
                     expertise,
-                    true, // isActive
+                    true,
                     maxCapacity,
                     currentMentees
             );
 
-            // Set rating information
-            tutorProfile.setRatingCount((int)(rating * 10)); // Simulate rating count
+            tutorProfile.setRatingCount((int)(rating * 10));
             tutorProfile.setRatingAvg(rating);
 
             tutorProfile.setTutorDescription(tutorDescription);
@@ -831,23 +830,133 @@ public class AdminBootstrapService implements CommandLineRunner {
 
     private void createVirtualStudent() {
         try {
-            System.out.println("Creating virtual student...");
+            System.out.println("Creating 12 virtual students...");
 
-            // Virtual Student: Computer Science Student
             createVirtualStudent(
                     "student001", "Trần Thị Lan", "lan.tran@hcmut.edu.vn", Department.CS,
-                    "20123456",
+                    "2012345",
                     generatePhoneNumber("student001"),
                     3.75,
-                    "I am passionate about machine learning and want to improve my data structures skills.",
-                    List.of("Get IELTS 7.0 by end of year", "Master machine learning fundamentals", "Build a full-stack web application"),
+                    "Em đam mê học máy và muốn cải thiện kỹ năng về cấu trúc dữ liệu.",
+                    List.of("Đạt IELTS 7.0", "Nắm vững kiến thức học máy", "Xây dựng một ứng dụng web full-stack"),
                     List.of(Expertise.ARTIFICIAL_INTELLIGENCE, Expertise.ALGORITHMS, Expertise.DATA_SCIENCE)
             );
 
-            System.out.println("Virtual student created successfully!");
+            createVirtualStudent(
+                    "student002", "Nguyễn Văn Hùng", "hung.nguyen@hcmut.edu.vn", Department.CS,
+                    "2114567",
+                    generatePhoneNumber("student002"),
+                    3.2,
+                    "Em muốn trở thành một nhà phát triển full-stack. Em đang tự học React và Spring Boot.",
+                    List.of("Thành thạo ReactJS", "Tìm được chỗ thực tập hè 2026", "Làm đồ án tốt nghiệp về web"),
+                    List.of(Expertise.WEB_DEVELOPMENT, Expertise.DATABASE_DESIGN, Expertise.SOFTWARE_ENGINEERING)
+            );
+
+            createVirtualStudent(
+                    "student003", "Lê Minh Châu", "chau.le@hcmut.edu.vn", Department.CS,
+                    "2210001",
+                    generatePhoneNumber("student003"),
+                    2.9,
+                    "Em quan tâm đến an ninh mạng và muốn tìm hiểu về kiểm thử xâm nhập (pentest).",
+                    List.of("Đạt chứng chỉ Security+", "Học về an toàn hệ thống", "Cải thiện GPA lên 3.0"),
+                    List.of(Expertise.CYBERSECURITY, Expertise.COMPUTER_NETWORKS)
+            );
+
+            createVirtualStudent(
+                    "student004", "Hà Minh Tuấn", "tuan.ha@hcmut.edu.vn", Department.CS,
+                    "2311122",
+                    generatePhoneNumber("student004"),
+                    3.3,
+                    "Em muốn theo mảng Khoa học Dữ liệu nhưng còn yếu về cơ sở dữ liệu.",
+                    List.of("Học Python cho Data Science", "Làm project phân tích dữ liệu", "Hiểu rõ về SQL và NoSQL"),
+                    List.of(Expertise.DATA_SCIENCE, Expertise.DATABASE_DESIGN, Expertise.ARTIFICIAL_INTELLIGENCE)
+            );
+
+            createVirtualStudent(
+                    "student005", "Phạm Gia Bảo", "bao.pham@hcmut.edu.vn", Department.CE,
+                    "2112345",
+                    generatePhoneNumber("student005"),
+                    3.5,
+                    "Em rất thích lập trình nhúng, vi điều khiển và các dự án IoT.",
+                    List.of("Làm một dự án IoT hoàn chỉnh", "Học nâng cao về C++ và lập trình RTOS"),
+                    List.of(Expertise.EMBEDDED_SYSTEMS, Expertise.CONTROL_SYSTEMS)
+            );
+
+            createVirtualStudent(
+                    "student006", "Võ Hoàng Yến", "yen.vo@hcmut.edu.vn", Department.CE,
+                    "2018901",
+                    generatePhoneNumber("student006"),
+                    3.1,
+                    "Em là sinh viên năm cuối, cần ôn tập kiến thức về Vi xử lý và Tín hiệu số.",
+                    List.of("Qua môn Vi xử lý với điểm cao", "Tìm hiểu về xử lý tín hiệu (DSP)"),
+                    List.of(Expertise.SIGNAL_PROCESSING, Expertise.EMBEDDED_SYSTEMS)
+            );
+
+            createVirtualStudent(
+                    "student007", "Trần Minh Quang", "quang.tran@hcmut.edu.vn", Department.EE,
+                    "2116789",
+                    generatePhoneNumber("student007"),
+                    3.8,
+                    "Em có GPA cao và muốn theo hướng nghiên cứu về hệ thống điều khiển tự động.",
+                    List.of("Xin học bổng Thạc sĩ", "Tham gia nghiên cứu khoa học", "Học Matlab/Simulink"),
+                    List.of(Expertise.CONTROL_SYSTEMS, Expertise.SIGNAL_PROCESSING)
+            );
+
+            createVirtualStudent(
+                    "student008", "Bùi Thị Mai", "mai.bui@hcmut.edu.vn", Department.EE,
+                    "2214321",
+                    generatePhoneNumber("student008"),
+                    2.7,
+                    "Kiến thức của em còn yếu, em cần tìm gia sư để cải thiện điểm số các môn chuyên ngành.",
+                    List.of("Cải thiện GPA > 2.8", "Không rớt môn nào học kỳ này"),
+                    List.of(Expertise.CONTROL_SYSTEMS, Expertise.EMBEDDED_SYSTEMS)
+            );
+
+            createVirtualStudent(
+                    "student009", "Đặng Tuấn Anh", "anh.dang@hcmut.edu.vn", Department.ME,
+                    "2015555",
+                    generatePhoneNumber("student009"),
+                    3.6,
+                    "Em rất giỏi vẽ kỹ thuật và sử dụng CAD/CAM. Em muốn tham gia đội đua xe F1 của trường.",
+                    List.of("Thiết kế xe F1", "Học nâng cao SolidWorks/AutoCAD", "Tìm hiểu về Nhiệt động lực học"),
+                    List.of(Expertise.MECHANICAL_DESIGN, Expertise.THERMODYNAMICS)
+            );
+
+            createVirtualStudent(
+                    "student010", "Hoàng Thị Thu", "thu.hoang@hcmut.edu.vn", Department.ME,
+                    "2310101",
+                    generatePhoneNumber("student010"),
+                    3.0,
+                    "Em là sinh viên năm 2. Em muốn học tốt môn Sức bền vật liệu.",
+                    List.of("Học tốt Sức bền vật liệu", "Tìm hiểu về các loại vật liệu mới"),
+                    List.of(Expertise.MECHANICAL_DESIGN, Expertise.MATERIALS_SCIENCE)
+            );
+
+            createVirtualStudent(
+                    "student011", "Lý Văn Thành", "thanh.ly@hcmut.edu.vn", Department.CH,
+                    "2117788",
+                    generatePhoneNumber("student011"),
+                    3.4,
+                    "Em muốn làm việc trong mảng Kỹ thuật quy trình và tối ưu hóa nhà máy.",
+                    List.of("Tìm hiểu về tối ưu hóa quy trình", "Thực tập tại một nhà máy sản xuất"),
+                    List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE)
+            );
+
+            createVirtualStudent(
+                    "student012", "Ngô Thanh Trúc", "truc.ngo@hcmut.edu.vn", Department.CH,
+                    "2219876",
+                    generatePhoneNumber("student012"),
+                    3.1,
+                    "Em cần trợ giúp về môn Hóa lý và Kỹ thuật quy trình.",
+                    List.of("Hiểu rõ về Hóa lý", "Tìm hiểu về vật liệu Polymer"),
+                    List.of(Expertise.PROCESS_ENGINEERING, Expertise.MATERIALS_SCIENCE)
+            );
+
+
+            System.out.println("Successfully created 12 virtual students!");
 
         } catch (Exception e) {
-            System.err.println("Error creating virtual student: " + e.getMessage());
+            System.err.println("Error creating virtual students: " + e.getMessage());
             // Don't throw exception to avoid breaking admin creation
         }
     }
@@ -924,8 +1033,8 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (yearsOfExperience >= 5) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Giải thưởng Giảng dạy Xuất sắc", // Tiêu đề
-                    "Được công nhận vì sự xuất sắc trong giảng dạy và cố vấn sinh viên trong hơn 5 năm.", // Mô tả
+                    "Distinguished Teaching Award",
+                    "Recognized for outstanding teaching excellence and student mentorship over 5+ years.",
                     "2023",
                     AchievementType.AWARD
             ));
@@ -934,8 +1043,8 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (yearsOfExperience >= 3) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Chứng chỉ Kỹ thuật Phần mềm Nâng cao", // Tiêu đề
-                    "Hoàn thành chứng chỉ chuyên nghiệp về các phương pháp phát triển phần mềm hiện đại.", // Mô tả
+                    "Advanced Software Engineering Certificate",
+                    "Completed professional certification in modern software development practices.",
                     "2022",
                     AchievementType.CERTIFICATION
             ));
@@ -944,19 +1053,18 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (yearsOfExperience >= 2) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Giải thưởng Cố vấn Tốt nhất", // Tiêu đề
-                    "Được trao tặng vì sự cố vấn đặc biệt và tỷ lệ sinh viên thành công cao.", // Mô tả
+                    "Best Mentor Award",
+                    "Awarded for exceptional mentorship and student success rate.",
                     "2024",
                     AchievementType.AWARD
             ));
         }
 
-        // Luôn thêm ít nhất một
         if (achievements.isEmpty()) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Chứng chỉ Trợ giảng", // Tiêu đề
-                    "Trợ giảng được chứng nhận cho các khóa học đại học.", // Mô tả
+                    "Teaching Assistant Certificate",
+                    "Certified teaching assistant for undergraduate courses.",
                     "2025",
                     AchievementType.CERTIFICATION
             ));
@@ -971,8 +1079,8 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (gpa >= 3.7) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Danh sách Khen thưởng của Khoa (Dean's List)", // Tiêu đề
-                    "Được công nhận vì thành tích học tập xuất sắc với GPA ≥ 3.7.", // Mô tả
+                    "Dean's List",
+                    "Recognized for academic excellence with GPA ≥ 3.7.",
                     "2025",
                     AchievementType.AWARD
             ));
@@ -981,8 +1089,8 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (gpa >= 3.5) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Chuyên ngành Cấu trúc Dữ liệu & Giải thuật", // Tiêu đề
-                    "Hoàn thành xuất sắc khóa học CTDL & GT nâng cao.", // Mô tả
+                    "Data Structures & Algorithms Specialization",
+                    "Completed advanced DSA course with distinction.",
                     "2024",
                     AchievementType.CERTIFICATION
             ));
@@ -991,19 +1099,18 @@ public class AdminBootstrapService implements CommandLineRunner {
         if (gpa >= 3.0) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Cuộc thi Lập trình - Top 10", // Tiêu đề
-                    "Đạt vị trí top 10 trong cuộc thi lập trình cấp trường.", // Mô tả
+                    "Programming Competition - Top 10",
+                    "Achieved top 10 position in university programming contest.",
                     "2024",
                     AchievementType.AWARD
             ));
         }
 
-        // Luôn thêm ít nhất một
         if (achievements.isEmpty()) {
             achievements.add(new Achievement(
                     UUID.randomUUID().toString(),
-                    "Giới thiệu về Khoa học Máy tính", // Tiêu đề
-                    "Hoàn thành thành công khóa học CS cơ bản.", // Mô tả
+                    "Introduction to Computer Science",
+                    "Successfully completed fundamental CS course.",
                     "2025",
                     AchievementType.CERTIFICATION
             ));
