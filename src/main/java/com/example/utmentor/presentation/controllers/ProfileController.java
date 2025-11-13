@@ -1,5 +1,8 @@
 package com.example.utmentor.presentation.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,6 +54,15 @@ public class ProfileController {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @GetMapping("/info/tutor-rating-distribution")
+    public ResponseEntity<Map<String, Map<Integer, Integer>>> getTutorRatingDistribution(
+            @RequestParam String id) {
+            var distribution = profileService.getTutorRatingDistribution(id);
+            Map<String, Map<Integer, Integer>> response = new HashMap<>();
+            response.put("rating", distribution);
+            return ResponseEntity.ok(response);
     }
 
 }

@@ -1,14 +1,19 @@
 package com.example.utmentor.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.utmentor.infrastructures.repository.Interface.RatingRepository;
 import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.TutorProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.infrastructures.repository.search.RatingSearchRepo;
+import com.example.utmentor.models.docEntities.Rating;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
@@ -33,6 +38,9 @@ public class ProfileService {
 
     @Autowired
     private RatingSearchRepo ratingSearchRepo;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     public ProfileInfoResponse getProfileInfo(String userId) {
         // Find user
@@ -108,10 +116,38 @@ public class ProfileService {
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
 
         if (!tutor.hasTutorProfile()) {
-            throw new ValidatorException("User is not a tutor");
+            throw new ValidatorException(Errors.USER_NOT_FOUND);
         }
 
         // Use repository to get reviews with aggregation
         return ratingSearchRepo.findTutorReviewsWithReviewerInfo(tutorId, page, pageSize, sort);
+    }
+
+    public Map<Integer,Integer> getTutorRatingDistribution(String tutorId) {
+        // Validate tutor exists
+        User tutor = userRepository.findById(tutorId)
+                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
+
+        if (!tutor.hasTutorProfile()) {
+            throw new ValidatorException(Errors.USER_NOT_FOUND);
+        }
+
+        // Fetch all ratings for this tutor
+        List<Rating> ratings = ratingRepository.findByRevieweeID(tutorId, Sort.unsorted());
+
+        Map<Integer, Integer> distribution = new HashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            distribution.put(i, 0);
+        }
+
+        // Count ratings by value
+        for (Rating rating : ratings) {
+            Integer ratingValue = rating.getRating();
+            if (ratingValue != null && ratingValue >= 1 && ratingValue <= 5) {
+                distribution.put(ratingValue, distribution.get(ratingValue) + 1);
+            }
+        }
+
+        return distribution;
     }
 }
