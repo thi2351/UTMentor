@@ -117,12 +117,7 @@ public class ProfileService {
             profile.getAchievements() != null ? profile.getAchievements() : List.of()
         );
     }
-
-    public GetIdResponse getUserIdByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
-        return new GetIdResponse(user.getId());
-    }
+    
 
     public PageResponse<ReviewResponse> getTutorReviews(String tutorId, int page, int pageSize, String sort) {
         User tutor = userRepository.findById(tutorId)

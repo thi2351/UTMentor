@@ -3,17 +3,11 @@ package com.example.utmentor.presentation.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.utmentor.models.webModels.profile.GetIdResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.utmentor.models.docEntities.Role;
 import com.example.utmentor.models.docEntities.users.User;
@@ -142,6 +136,11 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/get-id")
+    public ResponseEntity<GetIdResponse> getUserIdByUsername(@RequestParam String username) {
+        GetIdResponse response = userService.getUserIdByUsername(username);
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -40,12 +40,6 @@ public class ProfileController {
     private ProfileService profileService;
 
 
-    @GetMapping("/get-id")
-    public ResponseEntity<GetIdResponse> getUserIdByUsername(@RequestParam String username) {
-        GetIdResponse response = profileService.getUserIdByUsername(username);
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/info")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
             @RequestParam String id) {

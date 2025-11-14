@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.example.utmentor.models.webModels.profile.GetIdResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -175,5 +176,10 @@ public class UserService {
         User user = userOpt.get();
         user.setRoles(roles);
         userRepository.save(user);
+    }
+    public GetIdResponse getUserIdByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
+        return new GetIdResponse(user.getId());
     }
 }
