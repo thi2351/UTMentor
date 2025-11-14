@@ -202,7 +202,7 @@ public class ProfileService {
 
         String avatarUrl = null;
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            avatarUrl = googleCloudStorageService.uploadFile(avatarFile,"avatars");
+            avatarUrl = googleCloudStorageService.uploadFile(avatarFile,tutorId + "/avatar");
         }
         updateUserPhoneNumberAndAvatarUrl(tutorId, phoneNumber, avatarUrl);
         updateTutorProfileTutorDescriptionAndExpertise(tutorId, description, expertise, achievements);
