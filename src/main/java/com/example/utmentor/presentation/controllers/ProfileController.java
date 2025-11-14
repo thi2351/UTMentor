@@ -77,6 +77,22 @@ public class ProfileController {
         List<Achievement> achievements = new ArrayList<>();
         List<Expertise> expertises = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
+        var id = authentication.getName();
+
+        if(expertiseJson != null) {
+            expertises = objectMapper.readValue(expertiseJson, new TypeReference<List<Expertise>>() {});
+        }
+
+
+        if (achievementsJson != null) {
+            achievements = objectMapper.readValue(achievementsJson, new TypeReference<List<Achievement>>() {});
+        }
+        var response= profileService.updateTutorProfile(id,  avatarFile, phoneNumber, description, expertises, achievements);
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/search-tutor")
     public ResponseEntity<?> searchTutors(
@@ -128,22 +144,5 @@ public class ProfileController {
     // Helper classes for responses
     private record EmptySearchResponse(String message) {}
     private record ErrorResponse(String message) {}
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).build();
-        }
-        var id = authentication.getName();
-
-        if(expertiseJson != null) {
-            expertises = objectMapper.readValue(expertiseJson, new TypeReference<List<Expertise>>() {});
-        }
-
-
-        if (achievementsJson != null) {
-            achievements = objectMapper.readValue(achievementsJson, new TypeReference<List<Achievement>>() {});
-        }
-        var response= profileService.updateTutorProfile(id,  avatarFile, phoneNumber, description, expertises, achievements);
-        return ResponseEntity.ok(response);
-    }
 
 }
