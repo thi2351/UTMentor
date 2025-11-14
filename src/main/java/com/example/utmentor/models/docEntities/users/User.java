@@ -20,7 +20,7 @@ public class User {
     String id;
 
     @NotBlank
-    String  firstName;
+    String firstName;
 
     @NotBlank
     String lastName;
@@ -29,9 +29,12 @@ public class User {
 
     List<Role> roles = new ArrayList<>();
 
-    String avatarUrl=null;
+    String avatarUrl = null;
 
     String description;
+
+    // New field for phone number
+    String phoneNumber;
 
     @NotBlank @Indexed(unique = true)
     String username;
@@ -44,9 +47,8 @@ public class User {
     boolean isDeleted = false;
 
     Instant createdAt = Instant.now();
-    
-    Instant updatedAt = Instant.now();
 
+    Instant updatedAt = Instant.now();
 
     public User(String id,
                 String firstName,
@@ -110,8 +112,7 @@ public class User {
         this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
         this.updatedAt = Instant.now();
     }
-    
-    // Convenience methods for single role operations
+
     public Role getPrimaryRole() {
         return roles.isEmpty() ? null : roles.get(0);
     }
@@ -123,22 +124,21 @@ public class User {
             this.roles = new ArrayList<>();
         }
     }
-    
-    // Helper methods for role management
+
     public void addRole(Role role) {
         if (role != null && !roles.contains(role)) {
             roles.add(role);
         }
     }
-    
+
     public void removeRole(Role role) {
         roles.remove(role);
     }
-    
+
     public boolean hasRole(Role role) {
         return roles.contains(role);
     }
-    
+
     public boolean hasAnyRole(List<Role> requiredRoles) {
         return requiredRoles.stream().anyMatch(this.roles::contains);
     }
@@ -161,7 +161,16 @@ public class User {
         this.updatedAt = Instant.now();
     }
 
-    // Generate email from username
+    // New getter/setter for phoneNumber
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        this.updatedAt = Instant.now();
+    }
+
     public String getEmail() {
         return username + "@hcmut.edu.vn";
     }
@@ -184,46 +193,45 @@ public class User {
         this.updatedAt = Instant.now();
     }
 
-    // Helper methods for profile management
     public boolean hasTutorProfile() {
         return roles.contains(Role.TUTOR);
     }
-    
+
     public boolean hasStudentProfile() {
         return roles.contains(Role.STUDENT);
     }
-    
+
     public boolean isActive() {
         return isActive;
     }
-    
+
     public void setActive(boolean active) {
         this.isActive = active;
         this.updatedAt = Instant.now();
     }
-    
+
     public boolean isDeleted() {
         return isDeleted;
     }
-    
+
     public void setDeleted(boolean deleted) {
         this.isDeleted = deleted;
         this.updatedAt = Instant.now();
     }
-    
+
     public Instant getCreatedAt() {
         return createdAt;
     }
-    
+
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
         this.updatedAt = Instant.now();
     }
-    
+
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-    
+
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
