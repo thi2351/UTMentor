@@ -1,0 +1,202 @@
+@startuml AuthController Diagram
+!theme vibrant
+skinparam linetype ortho
+skinparam roundcorner 15
+skinparam shadowing true
+skinparam classAttributeIconSize 0
+skinparam wrapWidth 200
+
+' Define beautiful colors for different stereotypes
+skinparam class {
+    BackgroundColor<<boundary>> #FFE5B4
+    BorderColor<<boundary>> #FF8C00
+    BackgroundColor<<control>> #B8E6B8
+    BorderColor<<control>> #2E7D32
+    BackgroundColor<<entity>> #E1BEE7
+    BorderColor<<entity>> #7B1FA2
+    BackgroundColor<<DTO>> #FFCCBC
+    BorderColor<<DTO>> #E64A19
+    BackgroundColor<<Repository>> #B3E5FC
+    BorderColor<<Repository>> #0277BD
+    BackgroundColor<<Util>> #FFF9C4
+    BorderColor<<Util>> #F57F17
+    BackgroundColor<<Security>> #C5E1A5
+    BorderColor<<Security>> #558B2F
+}
+
+skinparam package {
+    BackgroundColor<<Presentation Layer>> #FFF3E0
+    BackgroundColor<<Business Layer>> #E8F5E9
+    BackgroundColor<<Persistence Layer>> #E3F2FD
+    BackgroundColor<<Util>> #FFFDE7
+    BackgroundColor<<Security>> #F1F8E9
+}
+
+top to bottom direction
+
+package "Presentation Layer" <<Presentation Layer>> {
+    package "Controller" {
+        class AuthController <<boundary>> {
+            - AuthService authService
+            - JwtService jwtService
+            - UserService userService
+            --
+            + register(request: CreateUserRequest): CreateUserResponse
+            + login(request: LoginRequest): LoginResponse
+            + refreshToken(request, response): LoginResponse
+            + logout(request, response): Void
+        }
+    }
+    
+    package "DTO" {
+        class CreateUserRequest <<DTO>> {
+            + email: String
+            + password: String
+        }
+        
+        class CreateUserResponse <<DTO>> {
+            + username: String
+        }
+        
+        class LoginRequest <<DTO>> {
+            + username: String
+            + password: String
+        }
+        
+        class LoginResponse <<DTO>> {
+            + firstName: String
+            + lastName: String
+            + username: String
+            + avatarUrl: String
+            + roles: List<Role>
+            + accessToken: String
+            + tokenType: String
+        }
+    }
+}
+
+package "Business Layer" <<Business Layer>> {
+    class AuthService <<control>> {
+        - UserRepository userRepository
+        - DatacoreRepository datacoreRepository
+        - PasswordEncoder passwordEncoder
+        --
+        + register(request: CreateUserRequest): CreateUserResponse
+        + login(request: LoginRequest): User
+        + createAcessTokenClaim(user: User): Map<String, Object>
+        + createRefreshTokenClaim(user: User): Map<String, Object>
+        + getLocalPart(email: String): String
+    }
+    
+    class UserService <<control>> {
+        - UserRepository userRepository
+        - PasswordEncoder passwordEncoder
+        --
+        + findById(id: String): Optional<User>
+    }
+}
+
+package "Persistence Layer" <<Persistence Layer>> {
+    interface UserRepository <<Repository>> {
+        + findById(id: String): Optional<User>
+        + findByUsername(username: String): Optional<User>
+        + existsByUsername(username: String): boolean
+        + existsByEmail(email: String): boolean
+        + save(user: User): User
+    }
+    
+    interface DatacoreRepository <<Repository>> {
+        + existsByEmail(email: String): boolean
+        + findByEmail(email: String): Optional<Datacore>
+    }
+}
+
+package "Security" <<Security>> {
+    class JwtService <<Security>> {
+        - SecretKey secretKey
+        - String issuer
+        - long expirationMinutes
+        --
+        + generateToken(subject, claims, isRefresh): String
+        + isTokenValid(token: String): boolean
+        + extractSubject(token: String): String
+        + extractAuthorities(claims: Claims): List<SimpleGrantedAuthority>
+        + parseAndValidate(token: String): Claims
+    }
+}
+
+package "Util" <<Util>> {
+    class ValidatorException <<Util>> {
+        - httpCode: HttpStatusCode
+        - title: String
+        - errors: List<ErrorItem>
+        + add(field, code, message): void
+        + hasAny(): boolean
+    }
+    
+    class Errors <<Util>> {
+        {static} + USER_NOT_FOUND: ErrorItem
+        {static} + INVALID_CREDENTIALS: ErrorItem
+        {static} + DATACORE_NOT_FOUND: ErrorItem
+        {static} + USERNAME_EXISTS: ErrorItem
+    }
+}
+
+' Relationships - Association (solid line, has-a relationship)
+AuthController --> AuthService : "uses"
+AuthController --> JwtService : "uses"
+AuthController --> UserService : "uses"
+AuthService --> UserRepository : "uses"
+AuthService --> DatacoreRepository : "uses"
+UserService --> UserRepository : "uses"
+
+' Relationships - Dependency (dashed arrow, uses/returns)
+AuthController ..> CreateUserRequest : "receives"
+AuthController ..> CreateUserResponse : "returns"
+AuthController ..> LoginRequest : "receives"
+AuthController ..> LoginResponse : "returns"
+AuthService ..> CreateUserRequest : "receives"
+AuthService ..> CreateUserResponse : "returns"
+AuthService ..> LoginRequest : "receives"
+AuthService ..> User : "returns"
+AuthService ..> ValidatorException : "throws"
+AuthService ..> Errors : "uses"
+
+' Layout - Force top-down order
+AuthController -[hidden]down-> AuthService
+AuthService -[hidden]down-> UserRepository
+
+' Layout - Force Persistence Layer vertical stacking
+UserRepository -[hidden]down-> DatacoreRepository
+
+note right of AuthController
+    **Boundary Class**
+    REST Controller
+    Handles authentication
+    JWT token management
+    Cross-origin enabled
+end note
+
+note right of AuthService
+    **Control Class**
+    Authentication Logic
+    User registration
+    User login
+    Token claims creation
+end note
+
+note right of JwtService
+    **Security Service**
+    JWT token generation
+    Token validation
+    Claims extraction
+end note
+
+note right of UserRepository
+    **Repository**
+    User data access
+    Repository pattern
+end note
+
+@enduml
+
