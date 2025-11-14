@@ -10,6 +10,8 @@ import com.example.utmentor.models.docEntities.Expertise;
 import com.example.utmentor.models.webModels.profile.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,12 +23,17 @@ import com.example.utmentor.infrastructures.repository.Interface.RatingRepositor
 import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.TutorProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
-import com.example.utmentor.infrastructures.repository.search.RatingSearchRepo;
+import com.example.utmentor.models.docEntities.Department;
+import com.example.utmentor.models.docEntities.Expertise;
 import com.example.utmentor.models.docEntities.Rating;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.models.webModels.PageResponse;
+import com.example.utmentor.models.webModels.profile.GetIdResponse;
+import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
+import com.example.utmentor.models.webModels.profile.ReviewResponse;
+import com.example.utmentor.models.webModels.search.TutorListItem;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
 
@@ -46,9 +53,6 @@ public class ProfileService {
     private TutorProfileRepository tutorProfileRepository;
 
     @Autowired
-    private RatingSearchRepo ratingSearchRepo;
-
-    @Autowired
     private RatingRepository ratingRepository;
 
     @Autowired
@@ -56,11 +60,9 @@ public class ProfileService {
 
 
     public ProfileInfoResponse getProfileInfo(String userId) {
-        // Find user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
 
-        // Get profiles
         ProfileInfoResponse.StudentProfileDTO studentDTO = null;
         if (user.hasStudentProfile()) {
             studentDTO = studentProfileRepository.findById(userId)
@@ -75,7 +77,6 @@ public class ProfileService {
                     .orElse(null);
         }
 
-        // Build response using record constructor
         return new ProfileInfoResponse(
             user.getFirstName(),
             user.getLastName(),
@@ -124,7 +125,6 @@ public class ProfileService {
     }
 
     public PageResponse<ReviewResponse> getTutorReviews(String tutorId, int page, int pageSize, String sort) {
-        // Validate tutor exists
         User tutor = userRepository.findById(tutorId)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
 
@@ -132,12 +132,11 @@ public class ProfileService {
             throw new ValidatorException(Errors.USER_NOT_FOUND);
         }
 
-        // Use repository to get reviews with aggregation
-        return ratingSearchRepo.findTutorReviewsWithReviewerInfo(tutorId, page, pageSize, sort);
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), Math.min(Math.max(1, pageSize), 100));
+        return ratingRepository.findTutorReviewsWithReviewerInfo(tutorId, pageable, sort);
     }
 
     public Map<Integer,Integer> getTutorRatingDistribution(String tutorId) {
-        // Validate tutor exists
         User tutor = userRepository.findById(tutorId)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
 
@@ -145,15 +144,13 @@ public class ProfileService {
             throw new ValidatorException(Errors.USER_NOT_FOUND);
         }
 
-        // Fetch all ratings for this tutor
-        List<Rating> ratings = ratingRepository.findByRevieweeID(tutorId, Sort.unsorted());
+        List<Rating> ratings = ratingRepository.findByRevieweeID(tutorId);
 
         Map<Integer, Integer> distribution = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             distribution.put(i, 0);
         }
 
-        // Count ratings by value
         for (Rating rating : ratings) {
             Integer ratingValue = rating.getRating();
             if (ratingValue != null && ratingValue >= 1 && ratingValue <= 5) {
@@ -162,6 +159,87 @@ public class ProfileService {
         }
 
         return distribution;
+    }
+
+    public PageResponse<TutorListItem> searchTutors(
+            String department,
+            List<String> expertise,
+            String sort,
+            int page,
+            int pageSize
+    ) {
+        ValidatorException validatorException = new ValidatorException("ProfileService");
+        
+        if (page < 1) {
+            validatorException.add("page", "INVALID_PAGE", "Page must be greater than 0");
+        }
+        
+        if (sort != null &&
+                !sort.equals("rating-descending") &&
+                !sort.equals("rating-ascending") &&
+                !sort.equals("firstName-ascending") &&
+                !sort.equals("firstName-descending") &&
+                !sort.equals("tutor-time")) {
+            validatorException.add("sort",
+                    "INVALID_SORT",
+                    "Sort must be 'rating-descending', 'rating-ascending', 'firstName-ascending', 'firstName-descending', or 'tutor-time'");
+        }
+        
+        if (sort == null) {
+            sort = "rating-descending";
+        }
+        
+        Department departmentEnum = null;
+        if (department != null) {
+            try {
+                departmentEnum = mapStringToDepartment(department);
+            } catch (ValidatorException e) {
+                validatorException.add("department", "INVALID_DEPARTMENT", e.getMessage());
+            }
+        }
+        
+        List<Expertise> expertiseEnums = null;
+        if (expertise != null && !expertise.isEmpty()) {
+            expertiseEnums = new java.util.ArrayList<>();
+            for (int i = 0; i < expertise.size(); i++) {
+                String exp = expertise.get(i);
+                if (exp != null && !exp.trim().isEmpty()) {
+                    try {
+                        expertiseEnums.add(mapStringToExpertise(exp));
+                    } catch (ValidatorException e) {
+                        validatorException.add("expertise[" + i + "]", "INVALID_EXPERTISE", e.getMessage());
+                    }
+                }
+            }
+        }
+        
+        if (validatorException.hasAny()) {
+            throw validatorException;
+        }
+        
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), Math.min(Math.max(1, pageSize), 100));
+        return tutorProfileRepository.search(
+            departmentEnum,
+            expertiseEnums,
+            sort,
+            pageable
+        );
+    }
+    
+    private Expertise mapStringToExpertise(String exp) throws ValidatorException {
+        try {
+            return Expertise.valueOf(exp.trim());
+        } catch (IllegalArgumentException e) {
+            throw new ValidatorException("Invalid expertise: " + exp + ".");
+        }
+    }
+    
+    private Department mapStringToDepartment(String dept) throws ValidatorException {
+        try {
+            return Department.valueOf(dept.trim());
+        } catch (IllegalArgumentException e) {
+            throw new ValidatorException("Invalid department: " + dept + ".");
+        }
     }
 
     public void updateUserPhoneNumberAndAvatarUrl(String userId, String phoneNumber, String avatarUrl) {
