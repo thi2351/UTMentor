@@ -27,7 +27,7 @@ import com.example.utmentor.models.webModels.search.TutorListItem;
 import com.example.utmentor.services.ProfileService;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.utmentor.util.ValidatorException;
-
+import com.example.utmentor.models.webModels.profile.GetIdResponse;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(
@@ -38,6 +38,13 @@ public class ProfileController {
 
     @Autowired
     private ProfileService profileService;
+
+
+    @GetMapping("/get-id")
+    public ResponseEntity<GetIdResponse> getUserIdByUsername(@RequestParam String username) {
+        GetIdResponse response = profileService.getUserIdByUsername(username);
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/info")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
