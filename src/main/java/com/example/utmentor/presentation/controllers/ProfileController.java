@@ -1,20 +1,25 @@
 package com.example.utmentor.presentation.controllers;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.example.utmentor.models.docEntities.Expertise;
+import com.example.utmentor.models.webModels.profile.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.utmentor.models.webModels.profile.GetIdResponse;
-import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
-import com.example.utmentor.models.webModels.profile.TutorReviewsResponse;
 import com.example.utmentor.services.ProfileService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -63,6 +68,35 @@ public class ProfileController {
             Map<String, Map<Integer, Integer>> response = new HashMap<>();
             response.put("rating", distribution);
             return ResponseEntity.ok(response);
+    }
+    @PutMapping(value ="/profile/tutor/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UpdateProfileTutorResponse> updateTutorProfile(
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("description") String description,
+            @RequestParam(value = "expertise", required = false) String expertiseJson,
+            @RequestParam(value = "achievements", required = false) String achievementsJson,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatarFile
+    ) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Achievement> achievements = new ArrayList<>();
+        List<Expertise> expertises = new ArrayList<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
+        var id = authentication.getName();
+
+        if(expertiseJson != null) {
+            expertises = objectMapper.readValue(expertiseJson, new TypeReference<List<Expertise>>() {});
+        }
+
+
+        if (achievementsJson != null) {
+            achievements = objectMapper.readValue(achievementsJson, new TypeReference<List<Achievement>>() {});
+        }
+        var response= profileService.updateTutorProfile(id,  avatarFile, phoneNumber, description, expertises, achievements);
+        return ResponseEntity.ok(response);
     }
 
 }
