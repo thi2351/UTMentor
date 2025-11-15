@@ -46,6 +46,20 @@ public final class Errors {
     
     public static final ErrorItem PASSWORD_REQUIRED =
             new ErrorItem("password", "required", "Password is required.");
+
+    //   Connection errors
+    public static final ErrorItem TUTOR_NOT_FOUND =
+            new ErrorItem("tutor", "not_found", "Tutor not found.");
+    public static final ErrorItem STUDENT_NOT_FOUND =
+            new ErrorItem("student", "not_found", "Student not found.");
+
+    public static final ErrorItem EXIST_CONNECTION =
+            new ErrorItem("connection", "existed", "Connection already exists.");
+
+    public static final ErrorItem FAILED_CREATE_CONNECTION =
+            new ErrorItem("connection", "creation_failed", "Failed to create connection request.");
+
+
     public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
     public static final String INVALID_TOKEN = "INVALID_TOKEN";
 }

@@ -117,7 +117,6 @@ public class ProfileService {
             profile.getAchievements() != null ? profile.getAchievements() : List.of()
         );
     }
-    
 
     public PageResponse<ReviewResponse> getTutorReviews(String tutorId, int page, int pageSize, String sort) {
         User tutor = userRepository.findById(tutorId)

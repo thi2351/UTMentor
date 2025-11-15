@@ -45,6 +45,14 @@ public class BootstrapHelper {
     }
 
     /**
+     * Generate a connection ID in the format "conn_" + alphanumeric string.
+     */
+    public String generateConnectionId() {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        return "conn_" + uuid.substring(0, 12).toUpperCase();
+    }
+
+    /**
      * Parse a timestamp string to Instant.
      */
     public Instant parseTimestamp(String timestampStr) {
@@ -149,4 +157,3 @@ public class BootstrapHelper {
         return achievements;
     }
 }
-

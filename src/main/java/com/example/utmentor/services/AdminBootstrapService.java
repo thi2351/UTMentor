@@ -1,5 +1,7 @@
 package com.example.utmentor.services;
 
+import com.example.utmentor.infrastructures.repository.Interface.ConnectionRepository;
+import com.example.utmentor.metadata.ConnectionBootstrap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -31,6 +33,9 @@ public class AdminBootstrapService implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ConnectionBootstrap connectionBootstrap;
 
     @Value("${admin.bootstrap.enabled:true}")
     private boolean bootstrapEnabled;
@@ -66,6 +71,9 @@ public class AdminBootstrapService implements CommandLineRunner {
 
             // Create bootstrap reviews
             reviewBootstrap.createBootstrapReviews();
+
+            // Create bootstrap connections
+            connectionBootstrap.createBootstrapConnections();
 
             System.out.println("==========================================");
             System.out.println("Bootstrap completed successfully!");
