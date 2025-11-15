@@ -1,0 +1,15 @@
+package com.example.utmentor.models.docEntities.Notification;
+
+public enum NotificationType {
+    CONNECTION_REQUEST,
+    CONNECTION_ACCEPTED,
+    CONNECTION_REJECTED,
+    NEW_MESSAGE,
+    BOOKING_CREATED,
+    BOOKING_CANCELLED,
+    BOOKING_COMPLETED,
+    ASSIGNMENT_CREATED,
+    ASSIGNMENT_GRADED,
+    REVIEW_RECEIVED,
+    SYSTEM_INFO
+}
