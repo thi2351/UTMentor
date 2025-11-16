@@ -26,22 +26,21 @@ public class NotificationRepository {
         return mongoTemplate.findById(id, Notification.class);
     }
 
-    public boolean markAsRead(String notificationId) {
+    public void markAsRead(String notificationId) {
         Query query = new Query(Criteria.where("_id").is(notificationId));
-        Update update = new Update().set("read", true);
+        Update update = new Update().set("isRead", true);
 
-        var result = mongoTemplate.updateFirst(query, update, Notification.class);
+        mongoTemplate.updateFirst(query, update, Notification.class);
 
-        return result.getModifiedCount() > 0;
     }
 
     public void save(Notification notification) {
         Notification saved = mongoTemplate.save(notification);
     }
 
-    public List<Notification> findByToUserIdOrderByIdDesc(String userId) {
+    public List<Notification> findByToUserId(String userId) {
         Query query = new Query(Criteria.where("toUserId").is(userId));
-        query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "_id"));
+        query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "timestamp"));
         return mongoTemplate.find(query, Notification.class);
     }
 }
