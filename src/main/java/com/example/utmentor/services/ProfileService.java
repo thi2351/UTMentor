@@ -6,31 +6,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.utmentor.infrastructures.repository.Interface.*;
+import com.example.utmentor.models.docEntities.Connection.Connection;
 import com.example.utmentor.models.docEntities.Expertise;
 import com.example.utmentor.models.webModels.profile.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import com.example.utmentor.infrastructures.repository.Interface.RatingRepository;
-import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
-import com.example.utmentor.infrastructures.repository.Interface.TutorProfileRepository;
-import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
 import com.example.utmentor.models.docEntities.Department;
-import com.example.utmentor.models.docEntities.Expertise;
+
 import com.example.utmentor.models.docEntities.Rating;
 import com.example.utmentor.models.docEntities.users.StudentProfile;
 import com.example.utmentor.models.docEntities.users.TutorProfile;
 import com.example.utmentor.models.docEntities.users.User;
 import com.example.utmentor.models.webModels.PageResponse;
-import com.example.utmentor.models.webModels.profile.GetIdResponse;
+
 import com.example.utmentor.models.webModels.profile.ProfileInfoResponse;
 import com.example.utmentor.models.webModels.profile.ReviewResponse;
 import com.example.utmentor.models.webModels.search.TutorListItem;
@@ -58,9 +56,14 @@ public class ProfileService {
     @Autowired
     private GoogleCloudStorageService googleCloudStorageService;
 
+    @Autowired
+    private ConnectionRepository connectionRepository;
 
-    public ProfileInfoResponse getProfileInfo(String userId) {
+
+    public ProfileInfoResponse getProfileInfo(String userId, String currentUserId) {
         User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
+        User currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new ValidatorException(Errors.USER_NOT_FOUND));
 
         ProfileInfoResponse.StudentProfileDTO studentDTO = null;
@@ -71,10 +74,27 @@ public class ProfileService {
         }
 
         ProfileInfoResponse.TutorProfileDTO tutorDTO = null;
-        if (user.hasTutorProfile()) {
-            tutorDTO = tutorProfileRepository.findById(userId)
-                    .map(this::mapToTutorDTO)
-                    .orElse(null);
+
+        tutorDTO = tutorProfileRepository.findById(userId, currentUserId)
+                                        .map(this::mapToTutorDTO)
+                                        .orElse(null);
+
+        if(currentUser.hasStudentProfile() && tutorDTO != null) {
+            Connection connection = connectionRepository.findFirstByTutorIdAndStudentId(userId, currentUserId);
+            if (connection != null) {
+                tutorDTO = new ProfileInfoResponse.TutorProfileDTO(
+                    tutorDTO.currMenteeCount(),
+                    tutorDTO.maximumCapacity(),
+                    tutorDTO.tutorDescription(),
+                    tutorDTO.expertise(),
+                    tutorDTO.ratingAvg(),
+                    tutorDTO.ratingCount(),
+                    tutorDTO.totalStudentTaught(),
+                    tutorDTO.yearsOfExperience(),
+                    tutorDTO.achievements(),
+                    connection.getStatus()
+                );
+            }
         }
 
         return new ProfileInfoResponse(
@@ -114,7 +134,8 @@ public class ProfileService {
             profile.getRatingCount(),
             profile.getTotalStudentTaught(),
             profile.getYearsOfExperience(),
-            profile.getAchievements() != null ? profile.getAchievements() : List.of()
+            profile.getAchievements() != null ? profile.getAchievements() : List.of(),
+            null
         );
     }
 
@@ -156,6 +177,7 @@ public class ProfileService {
     }
 
     public PageResponse<TutorListItem> searchTutors(
+            String id,
             String department,
             List<String> expertise,
             String sort,
@@ -213,6 +235,7 @@ public class ProfileService {
         
         Pageable pageable = PageRequest.of(Math.max(0, page - 1), Math.min(Math.max(1, pageSize), 100));
         return tutorProfileRepository.search(
+                id,
             departmentEnum,
             expertiseEnums,
             sort,

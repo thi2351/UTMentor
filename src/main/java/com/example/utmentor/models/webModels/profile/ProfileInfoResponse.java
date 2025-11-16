@@ -1,5 +1,6 @@
 package com.example.utmentor.models.webModels.profile;
 
+import com.example.utmentor.models.docEntities.Connection.StatusRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public record ProfileInfoResponse(
         Integer ratingCount,
         Integer totalStudentTaught,
         Integer yearsOfExperience,
-        List<Achievement> achievements
-    ) {}
+        List<Achievement> achievements,
+        StatusRequest statusConnection
+    ) { }
 }

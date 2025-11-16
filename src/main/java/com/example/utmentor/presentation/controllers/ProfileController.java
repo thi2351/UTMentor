@@ -43,7 +43,9 @@ public class ProfileController {
     @GetMapping("/info")
     public ResponseEntity<ProfileInfoResponse> getProfileInfo(
             @RequestParam String id) {
-        ProfileInfoResponse response = profileService.getProfileInfo(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        var currentId = authentication.getName();
+        ProfileInfoResponse response = profileService.getProfileInfo(id, currentId);
         return ResponseEntity.ok(response);
     }
 
@@ -114,8 +116,12 @@ public class ProfileController {
                     .filter(s -> !s.isEmpty())
                     .toList();
             }
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            var id = authentication.getName();
             
             PageResponse<TutorListItem> result = profileService.searchTutors(
+                id,
                 department,
                 expertiseList,
                 sort,
