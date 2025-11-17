@@ -1,23 +1,20 @@
 package com.example.utmentor.infrastructures.repository.Interface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.utmentor.models.docEntities.Connection.Connection;
+import com.example.utmentor.models.docEntities.Connection.StatusRequest;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -33,14 +30,23 @@ public class TutorProfileRepository {
     
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ConnectionRepository connectionRepository;
     
     public List<TutorProfile> findByIsActiveTrue() {
         Query query = new Query(Criteria.where("isActive").is(true));
         return mongoTemplate.find(query, TutorProfile.class);
     }
-    
+
     public Optional<TutorProfile> findById(String id) {
         TutorProfile profile = mongoTemplate.findById(id, TutorProfile.class);
+        return Optional.ofNullable(profile);
+    }
+    
+    public Optional<TutorProfile> findById(String id, String currentUserId) {
+        TutorProfile profile = mongoTemplate.findById(id, TutorProfile.class);
+        Connection connection = connectionRepository.findFirstByTutorIdAndStudentId(id, currentUserId);
         return Optional.ofNullable(profile);
     }
     
@@ -61,6 +67,7 @@ public class TutorProfileRepository {
     }
     
     public PageResponse<TutorListItem> search(
+            String currentUserId,
             Department department,
             List<Expertise> expertiseList,
             String sortKey,
@@ -93,6 +100,30 @@ public class TutorProfileRepository {
         filterPipeline.add(lookupUser);
 
         filterPipeline.add(Aggregation.unwind("userDetails", true));
+
+
+        Document lookupStage = new Document("$lookup", new Document()
+                .append("from", "connections")
+                .append("let", new Document("tutorId", "$_id"))
+                .append("pipeline", Arrays.asList(
+                        new Document("$match", new Document("$expr", new Document("$and", Arrays.asList(
+                                new Document("$eq", Arrays.asList("$tutorId", "$$tutorId")),
+                                new Document("$eq", Arrays.asList("$studentId", currentUserId))
+                        )))),
+                        new Document("$limit", 1)
+                ))
+                .append("as", "connectionDetails")
+        );
+
+
+        filterPipeline.add(context -> lookupStage);
+
+        filterPipeline.add(Aggregation.unwind("connectionDetails", true));
+
+        filterPipeline.add(Aggregation.project()
+                .andInclude("_id", "expertise", "currentMenteeCount", "maximumCapacity",
+                        "ratingCount", "ratingAvg", "description", "userDetails")
+                .and("connectionDetails.status").as("connectionStatus"));
 
         if (department != null) {
             MatchOperation matchUserDepartment = Aggregation.match(
@@ -219,6 +250,16 @@ public class TutorProfileRepository {
             }
         }
 
+        StatusRequest statusConnection = null;
+        String connectionStatusStr = doc.getString("connectionStatus");
+        if (connectionStatusStr != null) {
+            try {
+                statusConnection = StatusRequest.valueOf(connectionStatusStr);
+            } catch (IllegalArgumentException e) {
+                // Keep statusConnection as null if invalid value
+            }
+        }
+
         return new TutorListItem(
                 id,
                 firstName,
@@ -230,7 +271,8 @@ public class TutorProfileRepository {
                 ratingAvg,
                 currentMentees,
                 maxCapacity,
-                description
+                description,
+                statusConnection  // null = NONE, hoặc PENDING/ACCEPTED/REJECTED
         );
     }
 }
