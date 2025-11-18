@@ -3,6 +3,7 @@ package com.example.utmentor.infrastructures.repository.Interface;
 
 
 import com.example.utmentor.models.docEntities.Notification.Notification;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
@@ -26,13 +27,15 @@ public class NotificationRepository {
         return mongoTemplate.findById(id, Notification.class);
     }
 
-    public void markAsRead(String notificationId) {
-        Query query = new Query(Criteria.where("_id").is(notificationId));
+    public void markAsRead( List<String> notificationIds) {
+
+        Query query = new Query(Criteria.where("_id").in(notificationIds));
         Update update = new Update().set("isRead", true);
 
-        mongoTemplate.updateFirst(query, update, Notification.class);
+        UpdateResult result = mongoTemplate.updateMulti(query, update, Notification.class);
 
     }
+
 
     public void save(Notification notification) {
         Notification saved = mongoTemplate.save(notification);

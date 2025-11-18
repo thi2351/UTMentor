@@ -38,11 +38,4 @@ public class NotificationController {
     }
 
 
-    @MessageMapping("/notifications/markAsRead")
-    public void markAsRead(@Payload MarkReadRequest request) {
-        System.out.println("Received markAsRead for notification ID: " + request.getId());
-        String notificationId = request.getId();
-        notificationService.markAsRead(notificationId);
-    }
-
 }

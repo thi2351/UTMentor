@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Document(collection = "notifications")
 public class Notification {
@@ -24,6 +25,7 @@ public class Notification {
     public Notification() {}
 
     public Notification(String sendUserId, String toUserId, String content, NotificationType type) {
+        this.id = UUID.randomUUID().toString();
         this.sendUserId = sendUserId;
         this.toUserId = toUserId;
         this.content = content;
