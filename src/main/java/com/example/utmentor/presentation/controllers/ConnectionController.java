@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api")
 public class ConnectionController {
@@ -22,8 +24,8 @@ public class ConnectionController {
         this.notificationService = notificationService;
     }
     @PostMapping("/connections/create")
-    public ResponseEntity<CreateConnectionResponse> createConnection(
-            @Valid @RequestBody CreateConnectionRequest request) {
+    public ResponseEntity<CreateConnectionResponse> createConnection (
+            @Valid @RequestBody CreateConnectionRequest request) throws IOException {
 
         CreateConnectionResponse response = connectionService.ConnectionService(request);
         Notification notification = new Notification(request.studentId(), request.tutorId(),
