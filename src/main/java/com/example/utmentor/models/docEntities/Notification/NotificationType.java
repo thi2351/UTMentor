@@ -2,8 +2,7 @@ package com.example.utmentor.models.docEntities.Notification;
 
 public enum NotificationType {
     CONNECTION_REQUEST,
-    CONNECTION_ACCEPTED,
-    CONNECTION_REJECTED,
+    CONNECTION_REQUEST_RESPONSE,
     NEW_MESSAGE,
     BOOKING_CREATED,
     BOOKING_CANCELLED,
