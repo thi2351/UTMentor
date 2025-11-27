@@ -3,13 +3,18 @@ package com.example.utmentor.infrastructures.repository.Interface;
 import com.example.utmentor.models.docEntities.Connection.Connection;
 
 import com.example.utmentor.models.docEntities.Connection.StatusRequest;
+import com.example.utmentor.models.webModels.connections.GetPendingRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -21,6 +26,10 @@ public class ConnectionRepository {
     @Autowired
     public ConnectionRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    public Connection getConnection(String id) {
+        return mongoTemplate.findById(id, Connection.class);
     }
 
 
@@ -67,6 +76,54 @@ public class ConnectionRepository {
 
         mongoTemplate.save(connectionEntity);
         return true;
+    }
+
+    public void update(Connection connectionEntity) {
+        mongoTemplate.save(connectionEntity);
+    }
+
+
+    public List<GetPendingRequestResponse> getPendingRequests(String tutorId) {
+
+        List<AggregationOperation> pipeline = new ArrayList<>();
+
+        pipeline.add(
+                Aggregation.match(
+                        Criteria.where("tutorId").is(tutorId)
+                                .and("status").is(StatusRequest.PENDING)
+                )
+        );
+        pipeline.add(
+                Aggregation.lookup(
+                        "users",
+                        "studentId",
+                        "_id",
+                        "studentDetails"
+                )
+        );
+        pipeline.add(Aggregation.unwind("studentDetails", true));
+        pipeline.add(
+                Aggregation.project()
+                        .and("_id").as("connectionId")
+                        .and("studentDetails._id").as("studentId")
+                        .and("message").as("message")
+                        .and("createdAt").as("requestDate")
+                        .and("studentDetails.avatarUrl").as("studentAvatar")
+                        .andExpression("concat(studentDetails.lastName, ' ', studentDetails.firstName)").as("studentName")
+
+        );
+
+
+        Aggregation aggregation = Aggregation.newAggregation(pipeline);
+
+        List<GetPendingRequestResponse> results = mongoTemplate.aggregate(
+                aggregation,
+                "connections",
+                GetPendingRequestResponse.class
+        ).getMappedResults();
+
+        return results;
+
     }
 
 }

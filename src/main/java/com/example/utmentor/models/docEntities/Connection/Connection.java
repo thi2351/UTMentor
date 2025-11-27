@@ -1,6 +1,9 @@
 package com.example.utmentor.models.docEntities.Connection;
 
 import java.time.Instant;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,12 +13,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "connections")
 public class Connection {
 
+    // Getters and Setters
+    @Getter
     @Id
     private String id;
+    @Getter
     private String tutorId;
+    @Getter
     private String studentId;
+    @Getter
     private StatusRequest status; // 'Accepted', 'Pending', 'Reject'
+    @Getter
     private String message;
+    @Setter
+    @Getter
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -37,18 +48,9 @@ public class Connection {
         this.updatedAt = createdAt;
     }
 
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
         this.updatedAt = Instant.now();
-    }
-
-    public String getTutorId() {
-        return tutorId;
     }
 
     public void setTutorId(String tutorId) {
@@ -56,17 +58,9 @@ public class Connection {
         this.updatedAt = Instant.now();
     }
 
-    public String getStudentId() {
-        return studentId;
-    }
-
     public void setStudentId(String studentId) {
         this.studentId = studentId;
         this.updatedAt = Instant.now();
-    }
-
-    public StatusRequest getStatus() {
-        return status;
     }
 
     public void setStatus(StatusRequest status) {
@@ -74,21 +68,9 @@ public class Connection {
         this.updatedAt = Instant.now();
     }
 
-    public String getMessage() {
-        return message;
-    }
-
     public void setMessage(String message) {
         this.message = message;
         this.updatedAt = Instant.now();
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 
     @Override

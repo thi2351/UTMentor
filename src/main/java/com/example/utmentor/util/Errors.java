@@ -59,6 +59,9 @@ public final class Errors {
     public static final ErrorItem FAILED_CREATE_CONNECTION =
             new ErrorItem("connection", "creation_failed", "Failed to create connection request.");
 
+    public static final ErrorItem CONNECTION_NOT_FOUND =
+            new ErrorItem("connection", "not_found", "Connection request not found.");
+
 
     public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
     public static final String INVALID_TOKEN = "INVALID_TOKEN";

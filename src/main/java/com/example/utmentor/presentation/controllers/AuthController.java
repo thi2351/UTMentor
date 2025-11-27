@@ -26,10 +26,6 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-@CrossOrigin(
-        origins = {"http://localhost:5173"},
-        allowCredentials = "true"
-)
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
@@ -93,16 +89,14 @@ public class AuthController {
         // Build HttpOnly cookies
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(60*15)         // 15 minutes
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(14 * 24 * 60 * 60) // 14 days
                 .build();
@@ -155,8 +149,7 @@ public class AuthController {
         // Update access token cookie
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", newAccessToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(15*60) // 15 minutes
                 .build();
@@ -179,16 +172,14 @@ public class AuthController {
         // Clear both access and refresh token cookies
         ResponseCookie clearAccessCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(0)
                 .build();
         
         ResponseCookie clearRefreshCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(0)
                 .build();
