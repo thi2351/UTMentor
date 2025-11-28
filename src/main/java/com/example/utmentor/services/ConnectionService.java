@@ -1,17 +1,27 @@
 package com.example.utmentor.services;
 
+import com.example.utmentor.infrastructures.repository.Interface.CommunitiesRepository;
 import com.example.utmentor.infrastructures.repository.Interface.ConnectionRepository;
+import com.example.utmentor.infrastructures.repository.Interface.StudentProfileRepository;
 import com.example.utmentor.infrastructures.repository.Interface.UserRepository;
+import com.example.utmentor.models.docEntities.Communities.Communities;
 import com.example.utmentor.models.docEntities.Connection.Connection;
 import com.example.utmentor.models.docEntities.Connection.StatusRequest;
+import com.example.utmentor.models.docEntities.users.StudentProfile;
+import com.example.utmentor.models.docEntities.users.User;
+import com.example.utmentor.models.webModels.PageResponse;
 import com.example.utmentor.models.webModels.connections.CreateConnectionRequest;
 import com.example.utmentor.models.webModels.connections.CreateConnectionResponse;
+import com.example.utmentor.models.webModels.connections.GetPendingRequestResponse;
 import com.example.utmentor.util.Errors;
 import com.example.utmentor.util.ValidatorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -26,7 +36,11 @@ public class ConnectionService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private CommunitiesRepository communitiesRepository;
 
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
 
 
     public CreateConnectionResponse ConnectionService(CreateConnectionRequest request) {
@@ -77,5 +91,48 @@ public class ConnectionService {
             vex.setHttpCode(HttpStatus.INTERNAL_SERVER_ERROR);
             throw vex;
         }
+    }
+
+    public List<GetPendingRequestResponse> getPendingRequests(String tutorId) {
+        return connectionRepository.getPendingRequests(tutorId);
+    }
+
+    public void handleConnectionRequest(String connectionId, String tutorId, String studentId, boolean isAccepted) {
+        Connection connection = connectionRepository.getConnection(connectionId);
+        if (connection == null || !connection.getTutorId().equals(tutorId) || !connection.getStudentId().equals(studentId)) {
+            ValidatorException vex = new ValidatorException("Kết nối không tồn tại.");
+            vex.add(Errors.CONNECTION_NOT_FOUND);
+            vex.setHttpCode(HttpStatus.NOT_FOUND);
+            throw vex;
+        }
+        if (!isAccepted) {
+            connection.setStatus(StatusRequest.REJECTED);
+            connectionRepository.update(connection);
+            return;
+        }
+        connection.setStatus(StatusRequest.ACCEPTED);
+        connectionRepository.update(connection);
+        User tutor = UserRepository.findById(tutorId)
+                .orElseThrow(() -> new RuntimeException("Tutor not found: " + tutorId));
+
+        Communities communities = communitiesRepository.findByHost(tutorId);
+        if (communities != null) {
+            communities.addMember(studentId);
+            communities.setStudentCount(communities.getStudentCount() + 1);
+            communitiesRepository.save(communities);
+            return;
+        }
+
+        communities = new Communities(
+                UUID.randomUUID().toString(),
+                tutor.getLastName() + " " + tutor.getFirstName() + "'s Community",
+                tutorId,
+                List.of(studentId),
+                true);
+        communitiesRepository.save(communities);
+        StudentProfile student = studentProfileRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student profile not found: " + studentId));
+        student.addCommunity(communities.getId());
+        studentProfileRepository.save(student);
     }
 }

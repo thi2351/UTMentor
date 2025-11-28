@@ -30,13 +30,8 @@ public class StudentProfileService {
         return studentProfileRepository.save(studentProfile);
     }
 
-    public Optional<StudentProfile> findById(String id) {
-        return studentProfileRepository.findById(id);
-    }
 
-    public Optional<StudentProfile> findByStudentID(String studentID) {
-        return studentProfileRepository.findByStudentID(studentID);
-    }
+
 
     public List<StudentProfile> findAllActive() {
         return studentProfileRepository.findByIsActiveTrue();

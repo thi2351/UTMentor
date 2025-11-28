@@ -51,8 +51,7 @@ public class NotificationService {
             try {
                 handler.sendMessage(ReceiveSession, Map.of(
                     "type", "PRIVATE_NOTIFICATION",
-                    "to" , tutorId,
-                    "from" , sendUserId,
+                    "senderId" , sendUserId,
                     "content", response));
             } catch (IOException e) {
                 logger.error("Failed to send notification via WebSocket", e);
@@ -79,6 +78,41 @@ public class NotificationService {
         )).toList();
 
         return responseList;
+    }
+
+    public void sendNotificationForConnectionResponse(Notification notification) {
+
+        CompletableFuture<Void> sendMessageFuture = CompletableFuture.runAsync(()->{
+        var studentId = notification.getToUserId();
+
+        NotificationResponse response = new NotificationResponse(
+                notification.getId(),
+                "Phản hồi yêu cầu kết nối",
+                notification.getType(),
+                notification.getContent(),
+                notification.isRead(),
+                notification.getUpdatedAt().toString()
+        );
+
+        var sendUserId = notification.getSendUserId();
+
+        var  ReceiveSession = handler.getSessions().get(studentId);
+
+        if (ReceiveSession != null && ReceiveSession.isOpen()) {
+            try {
+                handler.sendMessage(ReceiveSession, Map.of(
+                    "type", "PRIVATE_NOTIFICATION",
+                    "senderId" , sendUserId,
+                    "content", response));
+            } catch (IOException e) {
+                logger.error("Failed to send notification via WebSocket", e);
+            }
+        }
+        });
+
+        CompletableFuture<Void> saveDbFuture = CompletableFuture.runAsync(() -> {
+            notificationRepository.save(notification);
+        });
     }
 
 }

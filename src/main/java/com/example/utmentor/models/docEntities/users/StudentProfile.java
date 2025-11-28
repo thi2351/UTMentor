@@ -1,7 +1,9 @@
 package com.example.utmentor.models.docEntities.users;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,6 +31,8 @@ public class StudentProfile {
     private List<Achievement> achievements;
 
     private List<Expertise> demandCourse;
+
+    private Set<String> communities = new HashSet<>();
 
     private boolean isActive = true;
 
@@ -130,5 +134,19 @@ public class StudentProfile {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<String> getCommunities() {
+        return communities;
+    }
+
+    public void setCommunities(Set<String> communities) {
+        this.communities = communities;
+        this.updatedAt = Instant.now();
+    }
+
+    public void addCommunity(String communityId) {
+        this.communities.add(communityId);
+        this.updatedAt = Instant.now();
     }
 }
